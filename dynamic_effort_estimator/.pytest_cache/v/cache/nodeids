@@ -1,0 +1,11 @@
+[
+  "tests/test_core.py::test_anfis_learns",
+  "tests/test_core.py::test_effort_responds_to_requirements",
+  "tests/test_core.py::test_mamdani_explain_returns_rules",
+  "tests/test_core.py::test_mamdani_monotone_and_bounded",
+  "tests/test_core.py::test_optimizers_beat_random_and_are_feasible",
+  "tests/test_core.py::test_pipeline_accuracy",
+  "tests/test_core.py::test_som_labels_cover_clusters",
+  "tests/test_core.py::test_tracker_events_and_triggers",
+  "tests/test_core.py::test_tracker_runs_optimizers"
+]
