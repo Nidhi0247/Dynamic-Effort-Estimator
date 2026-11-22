@@ -1,0 +1,80 @@
+dataset,rule,support,weight,n_rules,coverage,anfis_inputs,target
+Albrecht,IF c_hat IS very_low AND RawFPcounts IS low THEN effort IS low,2,1.573,6,1.0,"som_prior, AdjFP, Output",log effort
+Albrecht,IF c_hat IS low AND RawFPcounts IS low THEN effort IS very_low,4,2.274,6,1.0,"som_prior, AdjFP, Output",log effort
+Albrecht,IF c_hat IS low AND RawFPcounts IS medium THEN effort IS medium,3,2.045,6,1.0,"som_prior, AdjFP, Output",log effort
+Albrecht,IF c_hat IS medium AND RawFPcounts IS medium THEN effort IS medium,4,2.969,6,1.0,"som_prior, AdjFP, Output",log effort
+Albrecht,IF c_hat IS high AND RawFPcounts IS medium THEN effort IS fairly_high,6,4.116,6,1.0,"som_prior, AdjFP, Output",log effort
+Albrecht,IF c_hat IS very_high AND RawFPcounts IS high THEN effort IS very_high,4,2.769,6,1.0,"som_prior, AdjFP, Output",log effort
+Kemerer,IF c_hat IS very_low THEN effort IS medium,4,3.54,5,1.0,"som_prior, Language=3",log effort per size unit
+Kemerer,IF c_hat IS low THEN effort IS very_low,1,0.598,5,1.0,"som_prior, Language=3",log effort per size unit
+Kemerer,IF c_hat IS medium THEN effort IS low,4,2.867,5,1.0,"som_prior, Language=3",log effort per size unit
+Kemerer,IF c_hat IS high THEN effort IS high,4,3.45,5,1.0,"som_prior, Language=3",log effort per size unit
+Kemerer,IF c_hat IS very_high THEN effort IS medium,2,2.0,5,1.0,"som_prior, Language=3",log effort per size unit
+Desharnais,IF c_hat IS low THEN effort IS very_low,10,10.0,3,1.0,"som_prior, Language=3, Language=1",log effort per size unit
+Desharnais,IF c_hat IS medium THEN effort IS fairly_high,35,27.274,3,1.0,"som_prior, Language=3, Language=1",log effort per size unit
+Desharnais,IF c_hat IS high THEN effort IS fairly_high,32,28.268,3,1.0,"som_prior, Language=3, Language=1",log effort per size unit
+China,IF c_hat IS very_low AND Output IS low THEN effort IS medium,4,2.701,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS very_low AND Output IS medium THEN effort IS fairly_low,18,10.971,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS very_low AND Output IS high THEN effort IS fairly_low,44,36.569,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS low AND Output IS low THEN effort IS fairly_low,3,2.249,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS low AND Output IS medium THEN effort IS medium,28,16.5,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS low AND Output IS high THEN effort IS fairly_low,24,15.065,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS medium AND Output IS low THEN effort IS medium,23,14.556,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS medium AND Output IS medium THEN effort IS medium,97,52.534,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS medium AND Output IS high THEN effort IS medium,37,21.27,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS high AND Output IS low THEN effort IS fairly_high,35,24.762,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS high AND Output IS medium THEN effort IS medium,104,62.382,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS high AND Output IS high THEN effort IS medium,16,8.638,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS very_high AND Output IS low THEN effort IS fairly_high,14,10.459,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS very_high AND Output IS medium THEN effort IS medium,49,36.409,15,1.0,"som_prior, Input, AFP",log effort per size unit
+China,IF c_hat IS very_high AND Output IS high THEN effort IS fairly_low,3,1.634,15,1.0,"som_prior, Input, AFP",log effort per size unit
+Maxwell,IF c_hat IS low AND t08 IS medium AND t14 IS medium THEN effort IS low,4,1.279,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS medium AND t08 IS medium AND t14 IS low THEN effort IS high,2,0.81,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS medium AND t08 IS medium AND t14 IS medium THEN effort IS fairly_high,8,2.496,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS medium AND t08 IS high AND t14 IS low THEN effort IS extremely_high,5,3.102,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS low AND t14 IS medium THEN effort IS medium,4,2.204,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS medium AND t14 IS low THEN effort IS very_high,5,2.28,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS medium AND t14 IS medium THEN effort IS fairly_high,16,5.329,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS medium AND t14 IS high THEN effort IS fairly_high,2,1.02,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS high AND t14 IS low THEN effort IS extremely_high,2,1.034,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS high AND t14 IS medium THEN effort IS very_high,7,3.163,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Maxwell,IF c_hat IS high AND t08 IS high AND t14 IS high THEN effort IS fairly_high,2,1.459,11,0.9523809523809523,"som_prior, ifc=GUI, ifc=TextUI",log effort per size unit
+Kitchenham,IF c_hat IS very_low THEN effort IS fairly_high,21,20.244,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS low THEN effort IS fairly_high,14,10.164,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS fairly_low THEN effort IS fairly_high,41,31.907,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS medium THEN effort IS fairly_high,19,14.352,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS fairly_high THEN effort IS high,12,9.495,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS high THEN effort IS high,24,18.623,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Kitchenham,IF c_hat IS very_high THEN effort IS high,14,11.319,7,1.0,"som_prior, Adjusted.function.points",log effort per size unit
+Miyazaki94,IF c_hat IS very_low AND FORM IS medium THEN effort IS fairly_low,2,1.133,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS very_low AND FORM IS high THEN effort IS fairly_low,6,5.532,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS low AND FORM IS low THEN effort IS fairly_low,2,1.605,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS low AND FORM IS medium THEN effort IS medium,11,7.064,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS low AND FORM IS high THEN effort IS fairly_low,6,3.579,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS medium AND FORM IS low THEN effort IS high,5,3.642,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS medium AND FORM IS medium THEN effort IS medium,7,4.445,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS medium AND FORM IS high THEN effort IS high,2,0.907,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS high AND FORM IS medium THEN effort IS medium,1,0.734,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS high AND FORM IS high THEN effort IS low,3,1.662,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS very_high AND FORM IS medium THEN effort IS high,2,1.062,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+Miyazaki94,IF c_hat IS very_high AND FORM IS high THEN effort IS very_high,1,1.0,12,0.9791666666666666,"som_prior, EFORM, KLOC",log effort per size unit
+COCOMO81,IF c_hat IS very_low AND virt IS low THEN effort IS fairly_low,4,3.541,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS very_low AND virt IS medium THEN effort IS medium,5,3.088,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS very_low AND virt IS high THEN effort IS medium,1,0.983,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS low AND virt IS low THEN effort IS fairly_low,11,8.629,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS low AND virt IS medium THEN effort IS fairly_low,5,3.809,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS low AND virt IS high THEN effort IS very_high,1,0.806,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS medium AND virt IS low THEN effort IS medium,3,2.51,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS medium AND virt IS medium THEN effort IS high,6,3.737,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS medium AND virt IS high THEN effort IS high,6,3.893,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS high AND virt IS low THEN effort IS fairly_high,1,0.914,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS high AND virt IS medium THEN effort IS high,6,4.093,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS high AND virt IS high THEN effort IS fairly_high,6,5.085,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS very_high AND virt IS medium THEN effort IS fairly_high,5,4.23,14,1.0,"som_prior, time, stor",log effort per size unit
+COCOMO81,IF c_hat IS very_high AND virt IS high THEN effort IS very_high,3,2.298,14,1.0,"som_prior, time, stor",log effort per size unit
+NASA93,IF c_hat IS very_low AND forg=f IS low THEN effort IS fairly_low,50,46.725,6,1.0,"som_prior, time",log effort per size unit
+NASA93,IF c_hat IS low AND forg=f IS low THEN effort IS medium,7,4.58,6,1.0,"som_prior, time",log effort per size unit
+NASA93,IF c_hat IS medium AND forg=f IS low THEN effort IS medium,10,8.138,6,1.0,"som_prior, time",log effort per size unit
+NASA93,IF c_hat IS high AND forg=f IS low THEN effort IS high,13,9.946,6,1.0,"som_prior, time",log effort per size unit
+NASA93,IF c_hat IS high AND forg=f IS high THEN effort IS very_high,5,3.114,6,1.0,"som_prior, time",log effort per size unit
+NASA93,IF c_hat IS very_high AND forg=f IS high THEN effort IS extremely_high,8,6.936,6,1.0,"som_prior, time",log effort per size unit

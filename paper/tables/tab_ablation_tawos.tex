@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\caption{E1 ablations: each stage of DynEst-R switched off (pooled test windows).}
+\label{tab:ablation-tawos}
+\begin{tabular}{lrrrr}
+\toprule
+Variant & MAE & $\Delta$MAE & LMAE & SA \\
+\midrule
+\textbf{DynEst-R (proposed)} & \textbf{52.41} & \textbf{--} & \textbf{1.226} & \textbf{0.368} \\
+A5 no learned attributes & 52.56 & +0.3\% & 1.229 & 0.367 \\
+A4 expert Mamdani (PBL rules) & 52.74 & +0.6\% & 1.219 & 0.365 \\
+A1 no SOM & 52.94 & +1.0\% & 1.237 & 0.362 \\
+A2 no ANFIS & 53.32 & +1.7\% & 1.303 & 0.358 \\
+A3 no Mamdani & 53.61 & +2.3\% & 1.253 & 0.354 \\
+\bottomrule
+\end{tabular}
+\end{table}

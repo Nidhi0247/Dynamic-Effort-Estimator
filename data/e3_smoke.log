@@ -1,0 +1,80 @@
+23:17:09 origin 0: efficiency {'n': 11034, 'mu': -0.224, 'beta_wip': 0.042, 'beta_reassigned': 0.187, 'beta_familiarity': -0.052, 'beta_tenure': 0.029, 'kappa_h': 0.44, 'handover': 0.206, 'resid_sd': 1.375}
+23:17:10   episodes: validation=1 test=1
+23:17:13   trigger: not enough labelled decisions; learned policy falls back to tau tuned on validation
+23:17:13   tuned tau* = 0.075
+23:17:14   origin 0: 15 policy runs done
+23:17:14 wrote experiments\results\e3_tracking.csv
+23:17:14 wrote experiments\results\e4_backtest.csv
+23:17:14 wrote experiments\results\e5_policies.csv
+23:17:14 wrote experiments\results\e5_trigger.csv
+
+E3 tracking error (mean relative error of scope effort, per episode):
+       dynamic  static  static_plus_adds
+count    1.000   1.000             1.000
+mean     0.867   0.949             0.892
+std        NaN     NaN               NaN
+min      0.867   0.949             0.892
+25%      0.867   0.949             0.892
+50%      0.867   0.949             0.892
+75%      0.867   0.949             0.892
+max      0.867   0.949             0.892
+      a                b  median_diff  ci_low  ci_high  p_holm  A12 magnitude
+dynamic           static       -0.082  -0.082   -0.082     1.0  0.0     large
+dynamic static_plus_adds       -0.024  -0.024   -0.024     1.0  0.0     large
+ static static_plus_adds        0.058   0.058    0.058     1.0  1.0     large
+
+E4 back-test of the execution model (team's real assignment):
+       mae_sprints  same_sprint  rank_corr
+count         1.00          1.0      1.000
+mean          1.06          0.5      0.632
+std            NaN          NaN        NaN
+min           1.06          0.5      0.632
+25%           1.06          0.5      0.632
+50%           1.06          0.5      0.632
+75%           1.06          0.5      0.632
+max           1.06          0.5      0.632
+
+E5 policy outcomes (median over episodes):
+                   realised_hours  weighted_completion  weighted_tardiness  sla_miss_rate  carry_over_rate  churn_total  nervousness  replans  opt_time_s  completed
+policy                                                                                                                                                              
+hybrid(tau=0.05)          283.351                1.691              11.539          0.375            0.143          0.0        1.778     13.0       0.323      1.000
+sprint-boundary           277.292                1.864              14.981          0.500            0.125          0.0        1.889      4.0       0.089      1.000
+static                    277.292                1.864              14.981          0.500            0.333          0.0        1.667      1.0       0.018      1.000
+tau=0                     283.351                1.691              11.539          0.375            0.333          0.0        1.556     10.0       0.286      1.000
+tau=0.01                  283.351                1.691              11.539          0.375            0.333          0.0        1.556     10.0       0.247      1.000
+tau=0.02                  283.351                1.691              11.539          0.375            0.333          0.0        1.556     10.0       0.260      1.000
+tau=0.03                  283.351                1.691              11.539          0.375            0.333          0.0        1.556     10.0       0.200      1.000
+tau=0.05                  283.351                1.691              11.539          0.375            0.333          0.0        1.556     10.0       0.278      1.000
+tau=0.05 [greedy]         643.853                2.205              33.908          0.250            0.333          0.0        1.222     10.0       0.040      1.000
+tau=0.075                 283.351                1.691              11.539          0.375            0.333          0.0        1.556      9.0       0.231      1.000
+tau=0.1                   283.351                1.691              11.539          0.375            0.333          0.0        1.556      8.0       0.215      1.000
+tau=0.15                  277.292                1.864              14.981          0.500            0.333          0.0        1.667      6.0       0.129      1.000
+tau=0.2                   262.519                3.188              11.293          0.375            0.333          0.0        1.667      5.0       0.089      0.889
+tau=0.3                   277.292                1.864              14.981          0.500            0.333          0.0        1.667      5.0       0.145      1.000
+tuned-tau                 283.351                1.691              11.539          0.375            0.333          0.0        1.556      9.0       0.247      1.000
+
+[realised_hours] Friedman p=nan; mean ranks: {'sprint-boundary': 1.5, 'static': 1.5, 'hybrid(tau=0.05)': 4.5, 'tau=0': 4.5, 'tau=0.05': 4.5, 'tuned-tau': 4.5, 'tau=0.05 [greedy]': 7.0}
+23:17:14 wrote experiments\results\e5_pairwise_realised_hours.csv
+
+[weighted_completion] Friedman p=nan; mean ranks: {'hybrid(tau=0.05)': 2.5, 'tau=0': 2.5, 'tau=0.05': 2.5, 'tuned-tau': 2.5, 'sprint-boundary': 5.5, 'static': 5.5, 'tau=0.05 [greedy]': 7.0}
+23:17:14 wrote experiments\results\e5_pairwise_weighted_completion.csv
+
+[weighted_tardiness] Friedman p=nan; mean ranks: {'hybrid(tau=0.05)': 2.5, 'tau=0': 2.5, 'tau=0.05': 2.5, 'tuned-tau': 2.5, 'sprint-boundary': 5.5, 'static': 5.5, 'tau=0.05 [greedy]': 7.0}
+23:17:14 wrote experiments\results\e5_pairwise_weighted_tardiness.csv
+
+[churn_total] Friedman p=nan; mean ranks: {'hybrid(tau=0.05)': 4.0, 'sprint-boundary': 4.0, 'static': 4.0, 'tau=0': 4.0, 'tau=0.05': 4.0, 'tau=0.05 [greedy]': 4.0, 'tuned-tau': 4.0}
+23:17:14 wrote experiments\results\e5_pairwise_churn_total.csv
+23:17:14 wrote experiments\results\e5_tau_sensitivity.csv
+
+Tau sensitivity (median [95% BCa CI]):
+  tau  replans  churn_total  weighted_completion  weighted_tardiness  realised_hours
+0.000     10.0          0.0                1.691              11.539         283.351
+0.010     10.0          0.0                1.691              11.539         283.351
+0.020     10.0          0.0                1.691              11.539         283.351
+0.030     10.0          0.0                1.691              11.539         283.351
+0.050     10.0          0.0                1.691              11.539         283.351
+0.075      9.0          0.0                1.691              11.539         283.351
+0.100      8.0          0.0                1.691              11.539         283.351
+0.150      6.0          0.0                1.864              14.981         277.292
+0.200      5.0          0.0                3.188              11.293         262.519
+0.300      5.0          0.0                1.864              14.981         277.292

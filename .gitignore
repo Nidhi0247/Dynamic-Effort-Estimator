@@ -1,0 +1,11 @@
+/dynest/__pycache__
+/data/raw
+
+/data/tawos
+/data/cache
+/data/tawos_convert.log
+/experiments/results/raw
+__pycache__/
+/venv
+/venv-gpu
+/data/classic_raw

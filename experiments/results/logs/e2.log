@@ -1,0 +1,59 @@
+13:26:29 LOPO folds: 22
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done   5 tasks      | elapsed: 10.9min
+[Parallel(n_jobs=4)]: Done  10 tasks      | elapsed: 17.5min
+[Parallel(n_jobs=4)]: Done  18 out of  22 | elapsed: 27.0min remaining:  6.0min
+[Parallel(n_jobs=4)]: Done  22 out of  22 | elapsed: 32.9min finished
+13:59:22 wrote experiments\results\e2_unseen_projects.csv
+
+Unseen projects (mean over held-out projects):
+                         MAE    MdAE   LMAE     SA  MdMRE  PRED25
+model                                                            
+B5 MLP                36.209   9.531  1.201  0.495  0.810   0.144
+B4 Gradient boosting  36.366  10.301  1.216  0.490  0.877   0.154
+B3 Random forest      36.452  10.159  1.219  0.488  0.922   0.151
+DynEst-R (proposed)   36.641  10.091  1.233  0.486  0.910   0.147
+B2 Ridge              36.760  10.810  1.228  0.487  0.929   0.145
+B6 COCOMO II (local)  37.449  12.342  1.299  0.471  1.148   0.138
+B1 SP velocity        38.024   9.288  1.405  0.466  0.981   0.101
+B0 Median density     38.982  11.309  1.346  0.442  1.403   0.126
+B7 CAEA (fit)         39.277  10.933  1.373  0.440  1.356   0.124
+
+[MAE] projects=22 Friedman p=7.78e-05 CD=2.56
+mean ranks: {'B5 MLP': 3.41, 'B3 Random forest': 3.91, 'B4 Gradient boosting': 4.23, 'B2 Ridge': 4.32, 'DynEst-R (proposed)': 4.5, 'B0 Median density': 5.5, 'B6 COCOMO II (local)': 6.23, 'B1 SP velocity': 6.32, 'B7 CAEA (fit)': 6.59}
+                   a                   b  median_diff  p_holm   A12  magnitude
+   B0 Median density DynEst-R (proposed)        0.401   1.000 0.560 negligible
+      B1 SP velocity DynEst-R (proposed)        1.670   1.000 0.537 negligible
+            B2 Ridge DynEst-R (proposed)       -0.100   1.000 0.510 negligible
+    B3 Random forest DynEst-R (proposed)       -0.092   1.000 0.500 negligible
+B4 Gradient boosting DynEst-R (proposed)       -0.141   1.000 0.500 negligible
+              B5 MLP DynEst-R (proposed)       -0.284   1.000 0.498 negligible
+B6 COCOMO II (local) DynEst-R (proposed)        0.951   0.333 0.539 negligible
+       B7 CAEA (fit) DynEst-R (proposed)        1.012   0.447 0.572      small
+13:59:23 wrote experiments\results\e2_pairwise_MAE.csv
+
+[LMAE] projects=22 Friedman p=3.89e-09 CD=2.56
+mean ranks: {'B3 Random forest': 3.36, 'B4 Gradient boosting': 3.55, 'B5 MLP': 3.55, 'B2 Ridge': 4.05, 'DynEst-R (proposed)': 4.32, 'B0 Median density': 5.73, 'B6 COCOMO II (local)': 6.55, 'B7 CAEA (fit)': 6.91, 'B1 SP velocity': 7.0}
+                   a                   b  median_diff  p_holm   A12  magnitude
+   B0 Median density DynEst-R (proposed)        0.051   0.646 0.541 negligible
+      B1 SP velocity DynEst-R (proposed)        0.163   0.021 0.746      large
+            B2 Ridge DynEst-R (proposed)       -0.005   1.000 0.477 negligible
+    B3 Random forest DynEst-R (proposed)       -0.015   0.890 0.481 negligible
+B4 Gradient boosting DynEst-R (proposed)       -0.022   1.000 0.450 negligible
+              B5 MLP DynEst-R (proposed)       -0.009   1.000 0.421      small
+B6 COCOMO II (local) DynEst-R (proposed)        0.041   0.001 0.581      small
+       B7 CAEA (fit) DynEst-R (proposed)        0.136   0.050 0.601      small
+13:59:23 wrote experiments\results\e2_pairwise_LMAE.csv
+
+[SA] projects=22 Friedman p=7.78e-05 CD=2.56
+mean ranks: {'B5 MLP': 3.41, 'B3 Random forest': 3.91, 'B4 Gradient boosting': 4.23, 'B2 Ridge': 4.32, 'DynEst-R (proposed)': 4.5, 'B0 Median density': 5.5, 'B6 COCOMO II (local)': 6.23, 'B1 SP velocity': 6.32, 'B7 CAEA (fit)': 6.59}
+                   a                   b  median_diff  p_holm   A12  magnitude
+   B0 Median density DynEst-R (proposed)       -0.006   1.000 0.407      small
+      B1 SP velocity DynEst-R (proposed)       -0.022   1.000 0.438      small
+            B2 Ridge DynEst-R (proposed)        0.002   1.000 0.500 negligible
+    B3 Random forest DynEst-R (proposed)        0.002   1.000 0.502 negligible
+B4 Gradient boosting DynEst-R (proposed)        0.002   1.000 0.506 negligible
+              B5 MLP DynEst-R (proposed)        0.005   1.000 0.514 negligible
+B6 COCOMO II (local) DynEst-R (proposed)       -0.015   0.423 0.457 negligible
+       B7 CAEA (fit) DynEst-R (proposed)       -0.013   0.512 0.413      small
+13:59:23 wrote experiments\results\e2_pairwise_SA.csv

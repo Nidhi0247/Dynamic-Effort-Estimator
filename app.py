@@ -1,280 +1,133 @@
-"""Streamlit dashboard - Dynamic Software Effort Estimation from Customer Requirements.
-Run:  streamlit run app.py
-Edit / toggle / add requirements in the table: the whole pipeline re-executes automatically."""
+"""DynEst-R dashboard: replay a real held-out project window and watch estimation + re-planning react.
+
+    streamlit run app.py
+"""
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from plotly.subplots import make_subplots
 
-from dynest import (EffortPipeline, RequirementTracker, SprintProblem, benchmark, demo_project, demo_team,
-                    load_history, CLUSTERS)
-from dynest.mamdani import INPUTS, trap
-from dynest.data import FEATURES
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "experiments"))
+from common import RESULTS, dataset, efficiency_models, fitted_model, origin_splits, replay_builder  # noqa: E402
+from dynest.scheduling import Problem, run_nsga2, OBJECTIVES  # noqa: E402
+from dynest.sim import Episode, SprintBoundary, Static, Threshold  # noqa: E402
+from dynest.tracker import ReplayTracker  # noqa: E402
 
-st.set_page_config(page_title="DynEst - dynamic effort estimation", page_icon="📐", layout="wide")
-INK, TEAL, RUST, VIOLET, MUTE = "#1F2A44", "#0F7C8A", "#C2410C", "#6B4E9B", "#8A93A6"
-CCOL = {"UI-heavy": TEAL, "Backend-intensive": VIOLET, "Data-processing": RUST}
-st.markdown("""<style>
-@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap');
-html, body, [class*="css"] {font-family: 'Public Sans', sans-serif;}
-[data-testid="stMetric"] {background:#fff; border-left:4px solid #0F7C8A; padding:.6rem .9rem; border-radius:4px;}
-h1 {font-weight:700; letter-spacing:-.01em;}
-</style>""", unsafe_allow_html=True)
+st.set_page_config(page_title="DynEst-R", layout="wide")
 
 
-@st.cache_resource(show_spinner="Training SOM, ANFIS and calibrating the fuzzy engine on historical projects...")
-def get_pipeline():
-    return EffortPipeline().fit(load_history())
+@st.cache_resource(show_spinner="Loading real data and the trained model ...")
+def load(backend):
+    ds = dataset()
+    f, tr, va, te = origin_splits()[0]
+    m = fitted_model(0, tr, va, backend)
+    eff_plan, eff_true = efficiency_models(m, tr, va, te)
+    return ds, te, m, eff_plan, eff_true, replay_builder()
 
 
-def fresh_state():
-    st.session_state.base_reqs = demo_project()
-    st.session_state.tracker = None
-    st.session_state.editor_ver = st.session_state.get("editor_ver", 0) + 1
-    st.session_state.bench = None
+@st.cache_resource(show_spinner="Replaying the project window ...")
+def replay(p, si, policy_name, tau, opt, backend):
+    ds, te, m, eff_plan, eff_true, rb = load(backend)
+    w = te[te.project_id == p]
+    start = rb.episode_starts(p, w.resolved_at.min(), w.resolved_at.max())[si]
+    ep, info = rb.build(p, start, 4, m, eff_plan, eff_true)
+    pol = {"Threshold (tau)": Threshold(tau), "Sprint boundary": SprintBoundary(), "Static plan": Static()}[policy_name]
+    trk = ReplayTracker(ep, m, pol, opt, opt_kw=dict(gens=40, pop=40)).run()
+    return ep, info, trk
 
 
-def clean(df):
-    """Make an edited table safe: fill blanks, auto-assign ids, remove duplicate ids."""
-    d = df.copy().reset_index(drop=True)
-    defaults = dict(title="New requirement", ui=3, backend=3, data=3, complexity=5, integration=5, clarity=5,
-                    experience=5, size_points=5, priority=2, active=True)
-    for c, v in defaults.items():
-        d[c] = d[c].fillna(v)
-    d["id"] = [i if isinstance(i, str) and i.strip() else f"N{k + 1:02d}" for k, i in enumerate(d["id"])]
-    dup = d["id"].duplicated()
-    if dup.any():
-        st.warning(f"Duplicate ids ignored: {', '.join(d.loc[dup, 'id'])}")
-        d = d[~dup]
-    d["active"] = d["active"].astype(bool)
-    return d
-
-
-pipe = get_pipeline()
-if "base_reqs" not in st.session_state:
-    fresh_state()
-
-# ---------------------------------------------------------------- sidebar
-with st.sidebar:
-    st.header("Project settings")
-    st.caption("Developers (specialty drives the sprint optimiser)")
-    team = st.data_editor(demo_team(), num_rows="dynamic", key="team", width="stretch", column_config={
-        "specialty": st.column_config.SelectboxColumn(options=CLUSTERS + ["Generalist"], required=True),
-        "speed": st.column_config.NumberColumn(min_value=0.5, max_value=1.5, step=0.05, default=1.0)})
-    team = team.dropna(subset=["name"]).fillna({"specialty": "Generalist", "speed": 1.0}).reset_index(drop=True)
-    focus = st.slider("Focus factor (productive share of a day)", 0.5, 1.0, 0.8, 0.05)
-    sprint_days = st.number_input("Sprint length (working days)", 5, 20, 10)
-    rate = st.number_input("Cost per person-day (₹)", 500, 50000, 4000, 500)
-    st.divider()
-    threshold = st.slider("Re-optimise when effort drifts by ≥ (%)", 1, 30, 5) / 100
-    auto_opt = st.toggle("Auto-run GA + PSO on significant change", True)
-    iters = st.slider("Optimiser iterations", 30, 300, 100, 10)
-    if st.button("Reset demo project", width="stretch"):
-        fresh_state()
-        st.rerun()
-
-if team.empty:
-    st.error("Add at least one developer in the sidebar.")
+backend = st.sidebar.selectbox("Text encoder", ["minilm", "tfidf"])
+ds, te, m, eff_plan, eff_true, rb = load(backend)
+projects = sorted(te.project_id.unique(), key=lambda p: -int((te.project_id == p).sum()))
+p = st.sidebar.selectbox("Project (held-out window)", projects, format_func=lambda x: f"{ds.keys.get(x, x)} ({x})")
+w = te[te.project_id == p]
+starts = rb.episode_starts(p, w.resolved_at.min(), w.resolved_at.max())
+if not starts:
+    st.warning("No sprint starts in this project's held-out window.")
     st.stop()
+si = st.sidebar.selectbox("Window (real sprint start / team board)", range(len(starts)),
+                          format_func=lambda i: f"{pd.Timestamp(starts[i][0]).date()} | {starts[i][1]}")
+policy_name = st.sidebar.radio("Re-planning policy", ["Threshold (tau)", "Sprint boundary", "Static plan"])
+tau = st.sidebar.slider("Trigger threshold tau (%)", 0, 30, 5) / 100
+opt = st.sidebar.selectbox("Optimiser", ["ga", "pso", "nsga2", "mopso", "greedy"])
+ep, info, trk = replay(p, si, policy_name, tau, opt, backend)
+h = trk.history_frame()
+o = trk.outcome()
 
-# ---------------------------------------------------------------- header + editable backlog
-st.title("Dynamic software effort estimation")
-st.write("Edit the backlog below: change a rating, tick **active** off to drop a requirement, or add a row. "
-         "The SOM → ANFIS → Mamdani pipeline re-executes at once and the sprint plan is re-optimised when the effort "
-         "drifts past your threshold.")
+c = st.columns(6)
+c[0].metric("Scope effort (h)", f"{h.effort.iloc[-1]:,.0f}", f"{h.effort.iloc[-1] - h.effort.iloc[0]:+,.0f}")
+c[1].metric("95% interval (h)", f"{h.low.iloc[-1]:,.0f} - {h.high.iloc[-1]:,.0f}")
+c[2].metric("Change events", f"{len(ep.events)}")
+c[3].metric("Re-optimisations", f"{o['replans']}")
+c[4].metric("Total churn", f"{o['churn_total']:.2f}")
+c[5].metric("Weighted completion (sprints)", f"{o['weighted_completion']:.2f}")
 
-cfg = {c: st.column_config.NumberColumn(min_value=0, max_value=10, step=1) for c in
-       ["ui", "backend", "data", "complexity", "integration", "clarity", "experience"]}
-cfg["size_points"] = st.column_config.NumberColumn("size (pts)", min_value=1, max_value=40, step=1)
-cfg["priority"] = st.column_config.SelectboxColumn(options=[1, 2, 3], help="3 = must-have (scheduled first)")
-cfg["active"] = st.column_config.CheckboxColumn("active", default=True)
-edited = st.data_editor(st.session_state.base_reqs, num_rows="dynamic", width="stretch", column_config=cfg,
-                        key=f"backlog_{st.session_state.editor_ver}", hide_index=True)
-reqs = clean(edited)
-if not reqs["active"].any():
-    st.warning("All requirements are inactive - activate at least one.")
-    st.stop()
-
-tr = st.session_state.tracker
-if tr is None:
-    tr = RequirementTracker(pipe, team)
-    st.session_state.tracker = tr
-tr.team, tr.focus, tr.rate, tr.threshold = team, focus, float(rate), threshold
-tr.sprint_days, tr.auto_optimize, tr.opt_iters = int(sprint_days), auto_opt, iters
-with st.spinner("Re-estimating and re-optimising..."):
-    tr.update(reqs)
-snap = tr.snapshots[-1]
-est = snap.estimate
-
-c1, c2, c3, c4 = st.columns(4)
-c1.metric("Effort (person-days)", f"{est.effort:.1f}", f"{snap.effort_delta:+.1f}" if snap.version else None,
-          delta_color="inverse")
-c1.caption(f"95% band ±{est.band:.1f}  ({est.low:.0f} - {est.high:.0f})")
-c2.metric("Duration (working days)", f"{est.duration_days:.1f}", f"{snap.duration_delta:+.1f}" if snap.version else None,
-          delta_color="inverse")
-c2.caption(f"with {len(team)} developers; {est.duration_low:.0f} - {est.duration_high:.0f} d range")
-c3.metric("Cost (₹)", f"{snap.cost:,.0f}", f"{snap.cost_delta:+,.0f}" if snap.version else None, delta_color="inverse")
-c4.metric("Team for 4-sprint delivery", f"{est.team_for(4 * sprint_days)}", None)
-c4.caption("developers needed to finish in four sprints")
-with st.expander(f"Change log (version {snap.version})", expanded=False):
-    for s in reversed(tr.snapshots[-8:]):
-        flag = "re-optimised" if s.optimization else ("plan stale" if s.plan_stale else "")
-        st.markdown(f"**v{s.version}** · {'; '.join(s.events)} · Δ {100 * s.pct_delta:+.1f}% · {flag}")
-
-t_delta, t_som, t_exp, t_opt, t_model = st.tabs(
-    ["Delta timeline", "SOM clusters", "Why this estimate", "Sprint optimisation", "Model quality"])
-
-# ---------------------------------------------------------------- delta timeline
-with t_delta:
-    h = tr.history_frame()
+tabs = st.tabs(["Delta timeline", "SOM clusters", "Why this estimate", "Sprint plan & Pareto", "Model quality"])
+with tabs[0]:
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=h.version, y=h.high, line=dict(width=0), showlegend=False, hoverinfo="skip"))
-    fig.add_trace(go.Scatter(x=h.version, y=h.low, fill="tonexty", fillcolor="rgba(15,124,138,.15)",
-                             line=dict(width=0), name="95% band"))
-    fig.add_trace(go.Scatter(x=h.version, y=h.effort, mode="lines+markers", name="effort", line=dict(color=TEAL, width=3),
-                             text=h.events, hovertemplate="v%{x}<br>%{y:.1f} person-days<br>%{text}<extra></extra>"))
-    fig.update_layout(title="Project effort after every requirement change", xaxis_title="version",
-                      yaxis_title="person-days", height=380, xaxis=dict(dtick=1), margin=dict(t=50, b=10))
+    fig.add_trace(go.Scatter(x=h.version, y=h.high, line=dict(width=0), showlegend=False))
+    fig.add_trace(go.Scatter(x=h.version, y=h.low, fill="tonexty", line=dict(width=0), name="95% interval"))
+    fig.add_trace(go.Scatter(x=h.version, y=h.effort, mode="lines+markers", name="re-estimated scope effort",
+                             marker=dict(color=np.where(h.decision == "replan", "crimson", "steelblue"))))
+    fig.update_layout(xaxis_title="change event #", yaxis_title="hours", height=420)
     st.plotly_chart(fig, width="stretch")
-    st.dataframe(h.round(1), width="stretch", hide_index=True)
-
-# ---------------------------------------------------------------- SOM
-with t_som:
-    t = est.table
-    left, right = st.columns([3, 2])
-    with left:
-        hist = load_history().sample(250, random_state=0).copy()
-        hist["cluster_name"] = [CLUSTERS[i] for i in pipe.som.transform(hist[FEATURES].values / 10)[1]]
-        hist["source"] = "historical"
-        cur = t[FEATURES + ["cluster_name"]].copy()
-        cur["source"] = "current backlog"
-        allp = pd.concat([hist[FEATURES + ["cluster_name", "source"]], cur], ignore_index=True)
-        allp["size"] = np.where(allp.source == "current backlog", 12, 4)
-        sm = px.scatter_matrix(allp, dimensions=["complexity", "integration", "ui", "backend", "data"],
-                               color="cluster_name", color_discrete_map=CCOL, symbol="source",
-                               symbol_map={"historical": "circle", "current backlog": "diamond"}, opacity=.8)
-        sm.update_traces(diagonal_visible=False, marker=dict(size=5), showupperhalf=False)
-        sm.update_layout(height=620, title="Requirements mapped to functional clusters", legend_title="")
-        st.plotly_chart(sm, width="stretch")
-    with right:
-        som = pipe.som
-        lab = som.neuron_labels().reshape(som.rows, som.cols)
-        counts = np.bincount(t["som_neuron"], minlength=len(som.W)).reshape(som.rows, som.cols)
-        hm = go.Figure(go.Heatmap(z=som.umatrix(), colorscale="Blues", showscale=False,
-                                  text=[[f"{CLUSTERS[lab[r, c]][:4]}<br>{'●' * counts[r, c]}" for c in range(som.cols)]
-                                        for r in range(som.rows)], texttemplate="%{text}", hoverinfo="skip"))
-        hm.update_layout(title="SOM grid (shade = U-matrix distance, dots = current requirements)", height=380,
-                         yaxis=dict(autorange="reversed", showticklabels=False), xaxis=dict(showticklabels=False))
-        st.plotly_chart(hm, width="stretch")
-        st.dataframe(t[["id", "title", "cluster_name", "som_neuron"]], hide_index=True, width="stretch")
-
-# ---------------------------------------------------------------- explainability
-with t_exp:
-    t = est.table
-    pick = st.selectbox("Requirement", t["id"] + " - " + t["title"])
-    row = reqs[reqs["id"] == pick.split(" - ")[0]].iloc[0]
-    r, fired, agg = pipe.explain(row)
-    a, b = st.columns(2)
-    with a:
-        st.subheader("Activated Mamdani rules")
-        fr = pd.DataFrame(fired)
-        st.dataframe(fr, hide_index=True, width="stretch",
-                     column_config={"firing_strength": st.column_config.ProgressColumn("firing", min_value=0, max_value=1)})
-        st.markdown(f"**ANFIS complexity rating:** {r['complexity_rating']:.2f} / 10 &nbsp; "
-                    f"**Cluster:** {r['cluster_name']}  \n"
-                    f"**Defuzzified → calibrated:** {r['intensity']:.2f} person-days / point × {row['size_points']:g} pts "
-                    f"= **{r['effort']:.1f} ± {1.96 * r['sigma']:.1f} person-days**")
-    with b:
-        y = pipe.fis.y
-        fg = go.Figure(go.Scatter(x=y, y=agg, fill="tozeroy", line=dict(color=TEAL), name="aggregated output"))
-        raw = float(np.sum(agg * y) / max(agg.sum(), 1e-12))
-        fg.add_vline(x=raw, line_dash="dash", line_color=RUST, annotation_text=f"centroid {raw:.2f}")
-        fg.update_layout(title="Aggregated fuzzy output (person-days per point)", height=330, margin=dict(t=50, b=10))
-        st.plotly_chart(fg, width="stretch")
-    mf = make_subplots(rows=1, cols=3, subplot_titles=["complexity (ANFIS)", "clarity", "experience"])
-    xs = np.linspace(0, 10, 201)
-    vals = dict(complexity=r["complexity_rating"], clarity=row["clarity"], experience=row["experience"])
-    for k, (var, terms) in enumerate(INPUTS.items(), 1):
-        for name, p in terms.items():
-            mf.add_trace(go.Scatter(x=xs, y=trap(xs, *p), name=name, showlegend=False,
-                                    hovertemplate=name + "<extra></extra>"), row=1, col=k)
-        mf.add_vline(x=vals[var], line_dash="dash", line_color=RUST, row=1, col=k)
-    mf.update_layout(height=260, margin=dict(t=40, b=10), title="Input membership functions (dashed = this requirement)")
-    st.plotly_chart(mf, width="stretch")
-    st.subheader("Rules active across the whole backlog")
-    st.dataframe(est.rule_summary.head(12).round(3), hide_index=True, width="stretch")
-    st.caption(f"Confidence band: per-requirement spread σ_log = {pipe.sigma_log:.2f} measured on held-out history, "
-               "inflated for vague requirements, combined across requirements as independent errors plus a 3% "
-               "systematic term; shown as ±1.96σ.")
-
-# ---------------------------------------------------------------- optimisation
-with t_opt:
-    if not snap.optimization:
-        if snap.plan_stale:
-            st.warning("Requirements changed but the effort drift is below your threshold, so the current plan "
-                       "may be out of date.")
-        if st.button("Run GA + PSO now", type="primary"):
-            tr.optimize(snap)
-            st.rerun()
-    if tr.last_results:
-        res, prob = tr.last_results, tr.last_problem
-        if snap.plan_stale and snap.optimization == {}:
-            st.info("Showing the most recent optimised plan (older than the latest change).")
-        cc = go.Figure()
-        for name, col in (("GA", TEAL), ("PSO", RUST)):
-            cc.add_trace(go.Scatter(y=res[name].history, name=name, line=dict(color=col, width=3)))
-        cc.update_layout(title="Fitness convergence (lower is better)", xaxis_title="iteration", yaxis_title="fitness",
-                         height=330, margin=dict(t=50, b=10))
-        st.plotly_chart(cc, width="stretch")
-        mt = pd.DataFrame({n: dict(fitness=r.fitness, seconds=r.time_s, converged_at_iter=r.conv_iter,
-                                   leveling_efficiency=r.metrics["leveling_efficiency"],
-                                   utilization=r.metrics["utilization"], overload_days=r.metrics["overload_days"],
-                                   sprints_used=r.metrics["sprints_used"], tasks_moved=r.metrics["tasks_moved"])
-                           for n, r in res.items()}).round(3)
-        st.dataframe(mt, width="stretch")
-        best = min(res.values(), key=lambda r: r.fitness)
-        st.subheader(f"Sprint plan (best: {best.name})")
-        plan = prob.plan(best.genes)
-        load = plan.pivot_table(index="sprint", columns="developer", values="effective_days", aggfunc="sum").reindex(
-            columns=prob.dev_names).fillna(0)
-        txt = plan.groupby(["sprint", "developer"])["id"].apply(", ".join).unstack().reindex(columns=prob.dev_names).fillna("")
-        hm = go.Figure(go.Heatmap(z=load.values, x=load.columns, y=[f"Sprint {s}" for s in load.index],
-                                  text=txt.reindex(load.index).values, texttemplate="%{text}", colorscale="Teal",
-                                  zmin=0, zmax=prob.cap * 1.2, colorbar=dict(title="days")))
-        hm.update_layout(height=120 + 70 * len(load), yaxis=dict(autorange="reversed"), margin=dict(t=20, b=10))
-        st.plotly_chart(hm, width="stretch")
-        st.caption(f"Capacity per developer per sprint = {prob.cap:.1f} productive days. Requirements larger than "
-                   "~75% of that are split into chunks (R06#1, R06#2 ...).")
-        st.dataframe(plan.sort_values(["sprint", "developer"]), hide_index=True, width="stretch")
-        st.subheader("GA vs PSO benchmark")
-        runs = st.slider("Independent runs (different seeds)", 3, 20, 5)
-        if st.button("Run benchmark"):
-            with st.spinner("Benchmarking..."):
-                st.session_state.bench = benchmark(prob, runs=runs, iters=iters)
-        if st.session_state.bench is not None:
-            summ, _, raw = st.session_state.bench
-            st.dataframe(summ.T, width="stretch")
-            bx = px.box(raw, x="algorithm", y="fitness", color="algorithm", points="all",
-                        color_discrete_map={"GA": TEAL, "PSO": RUST}, title="Final fitness over independent runs")
-            bx.update_layout(height=320, showlegend=False)
-            st.plotly_chart(bx, width="stretch")
-
-# ---------------------------------------------------------------- model quality
-with t_model:
-    st.subheader("Held-out accuracy (20% of the historical database)")
-    st.dataframe(pipe.metrics.round(3), width="stretch")
-    st.caption("MMRE = mean magnitude of relative error (lower is better); PRED25 = share of estimates within 25% of "
-               "actual effort (higher is better). The baseline is a COCOMO-style linear regression on the same attributes.")
-    a, b = st.columns(2)
-    hh = np.array(pipe.anfis.history)
-    f1 = go.Figure([go.Scatter(y=hh[:, 0], name="train RMSE", line=dict(color=TEAL)),
-                    go.Scatter(y=hh[:, 1], name="validation RMSE", line=dict(color=RUST))])
-    f1.update_layout(title="ANFIS hybrid learning (0-1 scale)", xaxis_title="epoch", height=300, margin=dict(t=50))
-    a.plotly_chart(f1, width="stretch")
-    f2 = go.Figure(go.Scatter(y=pipe.som.qe_history, line=dict(color=VIOLET)))
-    f2.update_layout(title="SOM quantisation error", xaxis_title="epoch", height=300, margin=dict(t=50))
-    b.plotly_chart(f2, width="stretch")
-    st.write(f"ANFIS test RMSE on the 0-10 complexity rating: **{pipe.anfis_rmse_test:.2f}**; "
-             f"SOM test quantisation error: **{pipe.som_qe:.3f}**.")
+    st.caption("Red markers: the policy re-optimised the plan; blue: repair-only insertion.")
+    st.dataframe(h.round(2), width="stretch", height=320)
+with tabs[1]:
+    U = m.som.umatrix()
+    g = m.som.rows
+    st.plotly_chart(go.Figure(go.Heatmap(z=U, colorscale="Blues")).update_layout(title="U-matrix", height=380),
+                    width="stretch")
+    st.dataframe(pd.DataFrame(dict(neuron=range(len(m.som.names)), name=m.som.names,
+                                   training_issues=m.som.counts, prior_log_h_per_sp=np.round(m.som.prior, 3))))
+    st.caption(f"Component topics learnt from the data: {m.aux.topic_names if m.aux else []}")
+with tabs[2]:
+    fr = info["fr"]
+    pick = st.selectbox("Requirement", list(fr.index), format_func=lambda i: f"{fr.issue_key[i]}")
+    feats = rb.ctx.features_as_of(pd.Series([info["entry"][pick]], index=[pick]))
+    ex = m.explain(feats)
+    pr = m.predict(feats).iloc[0]
+    st.write(f"**{fr.issue_key[pick]}**: {str(feats.text.iloc[0])[:300]}")
+    st.write(f"Cluster **{ex['cluster']}** | ANFIS complexity {ex['c_hat']:.2f} | clarity {ex['clarity_hat']:.2f} | "
+             f"estimate **{pr.hours:.1f} h** (95% interval {pr.low:.1f} to {pr.high:.1f}) | measured effort {fr.effort_h[pick]:.1f} h")
+    if ex.get("rules"):
+        r = pd.DataFrame(ex["rules"])
+        st.plotly_chart(go.Figure(go.Bar(x=r.firing_strength, y=r.rule, orientation="h")).update_layout(
+            height=320, yaxis=dict(autorange="reversed"), title="Fired learned rules"), width="stretch")
+        st.plotly_chart(go.Figure(go.Scatter(x=ex["ygrid"], y=ex["aggregated"], fill="tozeroy")).add_vline(
+            x=ex["crisp"]).update_layout(height=260, xaxis_title="log hours per story point", title="Aggregated output"),
+            width="stretch")
+    st.dataframe(m.fis.rule_table().sort_values("support", ascending=False), width="stretch", height=260)
+with tabs[3]:
+    keys = info["fr"].issue_key
+    snaps = [s for s in trk.snapshots if s.plan]
+    v = st.select_slider("Plan after change event #", options=[s.version for s in snaps],
+                         value=snaps[-1].version) if len(snaps) > 1 else (snaps[0].version if snaps else 0)
+    snap = next((s for s in snaps if s.version == v), None)
+    if snap is None:
+        st.info("No open work in this window.")
+    else:
+        plan = pd.DataFrame([dict(issue=keys.get(int(i), i), sprint=s + 1, developer=ep.dev_names[d])
+                             for i, (s, d) in snap.plan.items()])
+        st.caption(f"Event: {snap.event} | decision: {snap.decision} | churn {snap.churn:.2f}")
+        st.dataframe(plan.sort_values(["sprint", "developer"]), width="stretch", height=300)
+    if st.button("Show the Pareto front of the current re-planning instance"):
+        e2 = Episode(ep, Static())
+        inst = e2._instance(repair=False)
+        prob = Problem(inst)
+        r = run_nsga2(prob, gens=60)
+        F = pd.DataFrame(r.front_F, columns=OBJECTIVES)
+        st.plotly_chart(go.Figure(go.Splom(dimensions=[dict(label=c, values=F[c]) for c in OBJECTIVES])).update_layout(
+            height=520, title="NSGA-II Pareto front (cost, schedule, workload, churn)"), width="stretch")
+with tabs[4]:
+    for name in ("e1_accuracy_summary.csv", "e5_tau_sensitivity.csv", "e6_optimisers.csv", "e7_preferences.csv"):
+        f = RESULTS / name
+        if f.exists():
+            st.subheader(name)
+            st.dataframe(pd.read_csv(f).round(3), width="stretch")
+    if not (RESULTS / "e1_accuracy_summary.csv").exists():
+        st.info("Run the experiments (see README) to populate this tab.")

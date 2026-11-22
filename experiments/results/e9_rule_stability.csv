@@ -1,0 +1,4 @@
+a,b,comparable,jaccard_rules,jaccard_antecedents,same_consequent,within_one_term
+0,1,True,0.5777777777777777,0.9722222222222222,0.7428571428571429,1.0
+0,2,False,,,,
+1,2,False,,,,

@@ -1,0 +1,6 @@
+13:46:04 origin 0: train=800 val=300 test=300 model=gpt2
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights:  42%|####1     | 62/148 [00:00<00:00, 619.71it/s]Loading weights:  84%|########3 | 124/148 [00:00<00:00, 381.94it/s]Loading weights: 100%|##########| 148/148 [00:00<00:00, 474.42it/s]
+13:48:29   origin 0 epoch 0: val MAE 21.31 h (29s)
+13:48:33 wrote experiments\results\e10_text_gpt2_smoke_raw.csv
+ origin       MAE  MdAE  LMAE       SA  coverage  rel_width
+      0 23740.925 10.59 8.548 -440.847     0.957 115200.584

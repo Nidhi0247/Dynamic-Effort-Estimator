@@ -1,0 +1,53 @@
+01:40:23 15 projects with >= 50 resolved issues with logged time (9054 issues)
+01:40:28   NEXUS        n= 1497 cov=0.51 effort_h=+0.35 active_bh=+0.35 In_Progres=+0.35 Total_Effo=+0.35 Resolution=+0.19 Story_Poin=+nan
+01:40:28   MXNET        n=  156 cov=0.06 effort_h=+0.03 active_bh=+0.03 In_Progres=+0.09 Total_Effo=+0.06 Resolution=+0.16 Story_Poin=+nan
+01:40:29   TIDOC        n=  737 cov=0.72 effort_h=+0.35 active_bh=+0.35 In_Progres=+0.34 Total_Effo=+0.35 Resolution=+0.23 Story_Poin=+0.63
+01:40:29   BAM          n=  550 cov=0.81 effort_h=+0.44 active_bh=+0.44 In_Progres=+0.45 Total_Effo=+0.38 Resolution=+0.20 Story_Poin=+0.39
+01:40:29   CLOV         n=  113 cov=0.87 effort_h=+0.14 active_bh=+0.14 In_Progres=+0.08 Total_Effo=+0.19 Resolution=+0.28 Story_Poin=+0.24
+01:40:29   CWD          n=  229 cov=0.73 effort_h=+0.13 active_bh=+0.12 In_Progres=+0.12 Total_Effo=+0.03 Resolution=+0.17 Story_Poin=+nan
+01:40:29   FE           n=  643 cov=0.91 effort_h=+0.11 active_bh=+0.13 In_Progres=+0.16 Total_Effo=+0.25 Resolution=+0.06 Story_Poin=-0.02
+01:40:30   JRASERVER    n= 1079 cov=0.39 effort_h=+0.22 active_bh=+0.21 In_Progres=+0.21 Total_Effo=+0.20 Resolution=+0.17 Story_Poin=+nan
+01:40:30   JSWCLOUD     n=  256 cov=0.61 effort_h=+0.54 active_bh=+0.52 In_Progres=+0.54 Total_Effo=+0.54 Resolution=+0.41 Story_Poin=+nan
+01:40:30   JSWSERVER    n=  271 cov=0.30 effort_h=+0.49 active_bh=+0.49 In_Progres=+0.50 Total_Effo=+0.50 Resolution=+0.40 Story_Poin=+nan
+01:40:31   CONFSERVER   n=   50 cov=0.56 effort_h=+0.46 active_bh=+0.48 In_Progres=+0.17 Total_Effo=+0.40 Resolution=-0.04 Story_Poin=+nan
+01:40:31   FAB          n=   57 cov=0.86 effort_h=+0.24 active_bh=+0.27 In_Progres=+0.24 Total_Effo=+0.28 Resolution=+0.08 Story_Poin=+0.82
+01:40:32   DM           n=  191 cov=0.95 effort_h=+0.42 active_bh=+0.37 In_Progres=+0.44 Total_Effo=+0.33 Resolution=+0.17 Story_Poin=+0.43
+C:\Users\dhruv\Documents\GitHub\Dynamic-Effort-Estimator\experiments\e0_proxy_validity.py:61: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  r[f"rho_{m}"] = float(ss.spearmanr(x[ok], d.Timespent[ok]).statistic) if ok.sum() >= 10 else np.nan
+01:40:33   MDL          n= 3117 cov=0.98 effort_h=+0.41 active_bh=+0.42 In_Progres=+nan Total_Effo=+0.19 Resolution=+0.14 Story_Poin=+0.30
+01:40:33   MULE         n=  108 cov=0.57 effort_h=+0.36 active_bh=+0.37 In_Progres=+0.32 Total_Effo=+0.32 Resolution=+0.19 Story_Poin=+nan
+
+Median Spearman rho with logged time over projects (BCa 95% CI):
+  effort_h                   median=+0.349 [+0.144, +0.440]  positive in 15/15 projects
+  active_bh                  median=+0.353 [+0.143, +0.437]  positive in 15/15 projects
+  In_Progress_Minutes        median=+0.279 [+0.156, +0.437]  positive in 14/14 projects
+  Total_Effort_Minutes       median=+0.318 [+0.194, +0.348]  positive in 15/15 projects
+  Resolution_Time_Minutes    median=+0.174 [+0.161, +0.232]  positive in 14/15 projects
+  Story_Point                median=+0.389 [+0.235, +0.631]  positive in 6/7 projects
+  effort_h_covered           median=+0.390 [+0.286, +0.463]  positive in 14/14 projects
+
+Pooled within-project rank correlation (ranks computed inside each project):
+  effort_h                   rho=+0.337 (n=9054)
+  active_bh                  rho=+0.338 (n=9054)
+  In_Progress_Minutes        rho=+0.234 (n=9054)
+  Total_Effort_Minutes       rho=+0.262 (n=9054)
+  Resolution_Time_Minutes    rho=+0.176 (n=9054)
+  Story_Point                rho=+0.383 (n=717)
+
+Proxy covers 73.3% of logged-time issues; median ratio proxy/logged (Timespent read as minutes) = 1.39
+   project    n  proxy_coverage  median_logged_h  median_proxy_h  rho_effort_h  rho_active_bh  rho_In_Progress_Minutes  rho_Total_Effort_Minutes  rho_Resolution_Time_Minutes  rho_Story_Point
+     NEXUS 1497            0.51             1.50            0.00          0.35           0.35                     0.35                      0.35                         0.19              NaN
+     MXNET  156            0.06             1.17            0.00          0.03           0.03                     0.09                      0.06                         0.16              NaN
+     TIDOC  737            0.72             2.00            1.07          0.35           0.35                     0.34                      0.35                         0.23             0.63
+       BAM  550            0.81             4.00            1.09          0.44           0.44                     0.45                      0.38                         0.20             0.39
+      CLOV  113            0.87             4.00            2.50          0.14           0.14                     0.08                      0.19                         0.28             0.24
+       CWD  229            0.73             4.00            0.21          0.13           0.12                     0.12                      0.03                         0.17              NaN
+        FE  643            0.91             1.62            1.40          0.11           0.13                     0.16                      0.25                         0.06            -0.02
+ JRASERVER 1079            0.39             2.00            0.00          0.22           0.21                     0.21                      0.20                         0.17              NaN
+  JSWCLOUD  256            0.61             4.01            0.29          0.54           0.52                     0.54                      0.54                         0.41              NaN
+ JSWSERVER  271            0.30             3.00            0.00          0.49           0.49                     0.50                      0.50                         0.40              NaN
+CONFSERVER   50            0.56             1.00            0.87          0.46           0.48                     0.17                      0.40                        -0.04              NaN
+       FAB   57            0.86             2.00            1.17          0.24           0.27                     0.24                      0.28                         0.08             0.82
+        DM  191            0.95             8.00            7.19          0.42           0.37                     0.44                      0.33                         0.17             0.43
+       MDL 3117            0.98             2.08            6.16          0.41           0.42                      NaN                      0.19                         0.14             0.30
+      MULE  108            0.57             4.00            0.22          0.36           0.37                     0.32                      0.32                         0.19              NaN

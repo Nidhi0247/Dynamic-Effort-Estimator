@@ -7,5 +7,21 @@
   "tests/test_core.py::test_pipeline_accuracy",
   "tests/test_core.py::test_som_labels_cover_clusters",
   "tests/test_core.py::test_tracker_events_and_triggers",
-  "tests/test_core.py::test_tracker_runs_optimizers"
+  "tests/test_core.py::test_tracker_runs_optimizers",
+  "tests/test_methods.py::test_anfis_rls_matches_batch",
+  "tests/test_methods.py::test_conformal_coverage",
+  "tests/test_methods.py::test_decoder_constraints_hold",
+  "tests/test_methods.py::test_executor_conserves_work",
+  "tests/test_methods.py::test_hypervolume_known_values",
+  "tests/test_methods.py::test_mamdani_tuning_does_not_hurt_holdout",
+  "tests/test_methods.py::test_optimisers_improve_on_random",
+  "tests/test_methods.py::test_partition_is_strong",
+  "tests/test_methods.py::test_preference_learning_recovers_weights",
+  "tests/test_methods.py::test_stats_against_scipy",
+  "tests/test_methods.py::test_wang_mendel_recovers_monotone_rules",
+  "tests/test_realdata.py::test_as_of_values_ignore_later_changes",
+  "tests/test_realdata.py::test_decision_time_precedes_work",
+  "tests/test_realdata.py::test_effort_proxy_wip_sharing",
+  "tests/test_realdata.py::test_pipeline_and_replay_small",
+  "tests/test_realdata.py::test_splits_are_time_ordered_per_project"
 ]

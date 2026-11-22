@@ -31,12 +31,12 @@ class ANFIS:
     def _lse(self, A, t, ridge=1e-6):
         return np.linalg.solve(A.T @ A + ridge * np.eye(A.shape[1]), A.T @ t)
 
-    def fit(self, X, t, X_val=None, t_val=None, epochs=60, lr=0.02):
+    def fit(self, X, t, X_val=None, t_val=None, epochs=60, lr=0.02, ridge=1e-6):
         X, t = np.asarray(X, float), np.asarray(t, float)
         best = (np.inf, None)
         for ep in range(epochs):
             A, rm, w, S, Xa = self._design(X)
-            self.theta = self._lse(A, t)                                  
+            self.theta = self._lse(A, t, ridge)                                  
             y = A @ self.theta
             err = y - t
             rmse = float(np.sqrt((err ** 2).mean()))
@@ -61,4 +61,23 @@ class ANFIS:
             self.C -= step * gc / (np.linalg.norm(gc) + 1e-9)
             self.S = np.clip(self.S - step * gs / (np.linalg.norm(gs) + 1e-9), 0.05, 1.0)
         self.C, self.S, self.theta = best[1]
+        self.init_online(X, ridge=max(ridge, 1e-6))
+        return self
+
+    # ---------------------------------------------------------------- online learning (RLS)
+    def init_online(self, X, ridge=1e-6, forget=1.0):
+        """Prepare recursive least squares on the consequents for the current premise parameters."""
+        A = self._design(np.asarray(X, float))[0]
+        self.P = np.linalg.inv(A.T @ A + ridge * np.eye(A.shape[1]))
+        self.forget = forget
+
+    def partial_fit(self, X, t):
+        """Update the consequent parameters with new (input, target) pairs, one at a time (RLS)."""
+        A = self._design(np.atleast_2d(np.asarray(X, float)))[0]
+        lam = getattr(self, "forget", 1.0)
+        for a, y in zip(A, np.atleast_1d(np.asarray(t, float))):
+            Pa = self.P @ a
+            k = Pa / (lam + a @ Pa)
+            self.theta = self.theta + k * (y - a @ self.theta)
+            self.P = (self.P - np.outer(k, Pa)) / lam
         return self

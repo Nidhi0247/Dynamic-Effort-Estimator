@@ -1,0 +1,4 @@
+origin,n_rules,inputs,terms,n_out,possible_cells,test_coverage,explained_by_3_rules,median_support,som_grid,som_qe,som_te,som_empty_neurons,som_largest_cluster_share
+0,36,"c_hat, clarity_hat, familiarity_log","[4, 3, 3]",5,36,1.0,0.37192342752962626,119.5,5x5,3.325458854961293,0.5241567912488605,0,0.09981768459434823
+1,35,"c_hat, clarity_hat, familiarity_log","[4, 3, 3]",5,36,1.0,0.5029666818804199,193.0,5x5,3.3375646636841303,0.4732998630762209,0,0.07576449109995435
+2,27,"c_hat, clarity_hat, familiarity_log","[3, 3, 3]",5,27,1.0,0.5227894257064722,177.0,5x5,3.39205620341576,0.43254329990884227,0,0.06973564266180492

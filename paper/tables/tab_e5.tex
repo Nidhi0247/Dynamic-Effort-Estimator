@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\caption{E5: re-planning policies on 88 replayed sprint windows (20 projects); simulation-relative (the E4 back-test gate was not met).}
+\label{tab:e5}
+\begin{tabular}{lrrrrr}
+\toprule
+Policy & W. compl. & $\Delta$ vs static & Hours & Churn & Re-plans \\
+\midrule
+static & 4.67 & +0.00 & 1302 & 0.00 & 1.0 \\
+sprint-boundary & 4.07 & -0.59 & 1372 & 0.87 & 10.3 \\
+$\tau$=0 & 4.56 & -0.11 & 1344 & 0.48 & 35.0 \\
+tuned-$\tau$ & 4.63 & -0.03 & 1313 & 0.14 & 5.6 \\
+hybrid($\tau$=0.05) & 4.08 & -0.59 & 1435 & 1.04 & 19.8 \\
+learned & 4.67 & +0.00 & 1321 & 0.31 & 19.7 \\
+\bottomrule
+\end{tabular}
+\end{table}

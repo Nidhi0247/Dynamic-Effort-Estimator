@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{E2: accuracy on projects never seen in training (leave-one-project-out over 22 TAWOS projects).}
+\label{tab:e2}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Model & MAE & MdAE & LMAE & SA & Cov. & IS & Rank & $r_{rb}$ MAE & $r_{rb}$ LMAE \\
+\midrule
+B5 MLP & 36.2 & 9.5 & 1.201 & 0.495 & -- & -- & 3.41 & +0.26 (1.000) & +0.37 (1.000) \\
+B3 Random forest & 36.5 & 10.2 & 1.219 & 0.488 & -- & -- & 3.91 & +0.26 (1.000) & +0.45 (0.890) \\
+B4 Gradient boosting & 36.4 & 10.3 & 1.216 & 0.490 & -- & -- & 4.23 & +0.24 (1.000) & +0.38 (1.000) \\
+B2 Ridge & 36.8 & 10.8 & 1.228 & 0.487 & -- & -- & 4.32 & +0.15 (1.000) & +0.23 (1.000) \\
+\textbf{DynEst-R (proposed)} & \textbf{36.6} & \textbf{10.1} & \textbf{1.233} & \textbf{0.486} & \textbf{0.945} & \textbf{622.78} & \textbf{4.50} & \textbf{--} & \textbf{--} \\
+B0 Median density & 39.0 & 11.3 & 1.346 & 0.442 & -- & -- & 5.50 & -0.41 (1.000) & -0.51 (0.646) \\
+B6 COCOMO II (local) & 37.4 & 12.3 & 1.299 & 0.471 & -- & -- & 6.23 & -0.60 (0.333) & -0.91 (0.001) \\
+B1 SP velocity & 38.0 & 9.3 & 1.405 & 0.466 & -- & -- & 6.32 & -0.47 (1.000) & -0.77 (0.021) \\
+B7 CAEA (fit) & 39.3 & 10.9 & 1.373 & 0.440 & -- & -- & 6.59 & -0.57 (0.447) & -0.72 (0.050) \\
+\bottomrule
+\end{tabular}
+\par\smallskip\parbox{0.95\linewidth}{\footnotesize MAE/MdAE in hours; LMAE = mean $|\log(\hat y/y)|$; SA = standardised accuracy vs random guessing. Rank = mean rank of per-project MAE (Friedman $p$ = 7.8e-05, Nemenyi CD = 2.56, 22 projects). $r_{rb}$ = paired rank-biserial effect of the proposed model vs the row model on per-project error (negative = proposed better), Holm-adjusted $p$ in brackets (family: all baselines and ablations, as pre-registered). Cov. = coverage of the 95\% interval; IS = Winkler interval score relative to the mean actual (lower is better); every model's interval uses the same normalised Mondrian conformal recipe; a very large IS (COCOMO II) comes from a few extremely wide intervals where that model's residual-scale estimate is unstable, not from under-coverage.}
+\end{table}

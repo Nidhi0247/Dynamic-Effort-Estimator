@@ -1,0 +1,14 @@
+# CAEA constants for baseline B7 in "paper" mode (dynest/baselines.py::CAEA).
+# Transcribe from: S. Bhalerao & M. Ingle (2009), "Incorporating vital factors in agile estimation through
+# algorithmic method", IJCSA 6(1); and F. Alshammari (2022), Soft Computing 26(20):10993-11005.
+# Fill every value with the paper's number and cite the table/page next to it. Until all values are
+# filled, "paper" mode raises an error and only the fitted proxy CAEA (mode="fit") is reported.
+normaliser: null          # divisor that turns the summed factor values into the adjustment share
+factor_values:
+  project_domain:      {low: null, medium: null, high: null}
+  performance:         {low: null, medium: null, high: null}
+  configuration:       {low: null, medium: null, high: null}
+  data_transactions:   {low: null, medium: null, high: null}
+  complex_processing:  {low: null, medium: null, high: null}
+  ease_of_operation:   {low: null, medium: null, high: null}
+  security:            {low: null, medium: null, high: null}

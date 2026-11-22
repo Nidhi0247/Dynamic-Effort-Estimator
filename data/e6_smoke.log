@@ -1,0 +1,54 @@
+21:51:25 origin 0: learnt weights [0.25 0.25 0.25 0.25]; held-out pairwise accuracy 0.000 (equal weights 0.000)
+21:51:29   origin 0: 2 instances optimised
+21:51:29 wrote experiments\results\e7_preferences.csv
+21:51:29 wrote experiments\results\e6_optimisers.csv
+21:51:29 wrote experiments\results\e6_dirichlet.csv
+
+E7 learnt preference weights:
+  origin  n_train  n_test  w_cost  w_schedule  w_workload  w_churn  train_acc  test_acc_learned  test_acc_equal
+      0        1       1    0.25        0.25        0.25     0.25        0.0               0.0             0.0
+
+E6 optimisers (mean over instances):
+           score      HV  IGDplus  time_s  conv_iter
+algo                                               
+GA       0.0345  0.7962   0.1802  0.0525       0.75
+Greedy   0.1250     NaN      NaN  0.0001       0.00
+MOPSO    0.1220  0.8767   0.0762  0.0756       3.00
+NSGA-II  0.1220  0.8315   0.1892  0.1354       0.00
+PSO      0.0345  0.7962   0.1802  0.0500       0.75
+
+[score] Friedman p=nan; mean ranks: {'GA': 2.25, 'PSO': 2.25, 'MOPSO': 3.25, 'NSGA-II': 3.25, 'Greedy': 4.0}
+      a       b  median_diff  p_holm   A12  magnitude
+     GA  Greedy      -0.0905     1.0 0.375      small
+     GA   MOPSO      -0.0875     1.0 0.375      small
+     GA NSGA-II      -0.0875     1.0 0.375      small
+     GA     PSO       0.0000     1.0 0.500 negligible
+ Greedy   MOPSO       0.0030     1.0 0.625      small
+ Greedy NSGA-II       0.0030     1.0 0.625      small
+ Greedy     PSO       0.0905     1.0 0.625      small
+  MOPSO NSGA-II       0.0000     1.0 0.500 negligible
+  MOPSO     PSO       0.0875     1.0 0.625      small
+NSGA-II     PSO       0.0875     1.0 0.625      small
+21:51:29 wrote experiments\results\e6_pairwise_score.csv
+
+[HV] Friedman p=nan; mean ranks: {'MOPSO': 1.75, 'NSGA-II': 2.25, 'GA': 3.0, 'PSO': 3.0}
+      a       b  median_diff  p_holm   A12  magnitude
+     GA   MOPSO      -0.0805     1.0 0.375      small
+     GA NSGA-II      -0.0353     1.0 0.375      small
+     GA     PSO       0.0000     1.0 0.500 negligible
+  MOPSO NSGA-II       0.0451     1.0 0.625      small
+  MOPSO     PSO       0.0805     1.0 0.625      small
+NSGA-II     PSO       0.0353     1.0 0.625      small
+21:51:29 wrote experiments\results\e6_pairwise_HV.csv
+
+[IGDplus] Friedman p=nan; mean ranks: {'MOPSO': 1.75, 'GA': 2.5, 'PSO': 2.5, 'NSGA-II': 3.25}
+      a       b  median_diff  p_holm   A12  magnitude
+     GA   MOPSO        0.104     1.0 0.625      small
+     GA NSGA-II       -0.009     1.0 0.375      small
+     GA     PSO        0.000     1.0 0.500 negligible
+  MOPSO NSGA-II       -0.113     1.0 0.375      small
+  MOPSO     PSO       -0.104     1.0 0.375      small
+NSGA-II     PSO        0.009     1.0 0.625      small
+21:51:29 wrote experiments\results\e6_pairwise_IGDplus.csv
+
+Dirichlet robustness: GA better than PSO in 10.0% of 10 weight samples

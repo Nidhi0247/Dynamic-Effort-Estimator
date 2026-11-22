@@ -1,0 +1,32 @@
+# Pre-registered primary endpoints, fixed on 2026-11-21 BEFORE any E3-E7 result was inspected
+# (E1 pooled accuracy had been seen; E1b/E2 not yet).  Everything not listed here is secondary/exploratory.
+# Statistical rule for every primary endpoint: Friedman omnibus, pairwise two-sided Wilcoxon signed-rank with
+# Holm correction across the comparisons listed, Vargha-Delaney A12 effect size, BCa 95% CI of the median
+# paired difference.  A claim of difference requires p_holm < 0.05 AND A12 magnitude >= small.
+
+estimation:            # E1 (later data, same projects) and E2 (unseen projects); unit = project
+  metrics: [MAE, SA, LMAE]
+  comparisons: "DynEst-R vs each baseline B0-B7; DynEst-R vs each ablation A1-A5"
+  interval_metric: requirement-level coverage of the 95% interval (target 0.95 +- 0.03)
+
+tracking:              # E3; unit = test episode
+  metrics: [mean relative scope-effort error after each event]
+  comparisons: "dynamic re-estimation vs static estimate; dynamic vs static_plus_adds"
+
+replanning:            # E5; unit = test episode (common random numbers across policies)
+  metrics: [weighted_completion, realised_hours, churn_total]
+  comparisons: "learned trigger and tuned-tau vs static, sprint-boundary, tau=0"
+  gate: "E4 back-test median completion error <= 1 sprint; otherwise E5 is reported as relative only"
+
+optimisers:            # E6; unit = re-planning instance
+  metrics: [score under learnt weights, hypervolume]
+  comparisons: "GA vs PSO vs NSGA-II vs MOPSO vs greedy"
+
+classic_benchmark:     # E8; added 2026-11-22 BEFORE the full E8 run (only a 2-dataset smoke run had been seen)
+  datasets: [Albrecht, Kemerer, Desharnais, China, Maxwell, Kitchenham, Miyazaki94, COCOMO81, NASA93]
+  protocol: "3 x 10-fold CV, identical folds for all models; 10 random-search trials per tuned model scored by inner 3-fold CV"
+  metrics: [SA, LMAE, MdAE]
+  comparisons: "NeuroFuzzy vs each baseline: per dataset Wilcoxon on per-project absolute error (Holm within dataset),
+                paired rank-biserial r_rb; across datasets Friedman + Nemenyi on SA and LMAE"
+  interval_metric: coverage of the 95% split-conformal interval (all models, same recipe), relative width, interval score
+  caveat: "COCOMO-81 nominal constants were calibrated by Boehm on COCOMO81 itself (optimistic on that dataset)"

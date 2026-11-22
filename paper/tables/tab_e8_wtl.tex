@@ -1,0 +1,26 @@
+\begin{table}[t]
+\centering
+\small
+\caption{E8: per-dataset win/tie/loss of the proposed model (Wilcoxon signed-rank on per-project absolute error, Holm-adjusted within dataset, $\alpha$ = 0.05).}
+\label{tab:e8-wtl}
+\begin{tabular}{lrrr}
+\toprule
+Proposed vs & Win & Tie & Loss \\
+\midrule
+KLOC power law (log-log) & 0 & 3 & 0 \\
+CART & 1 & 8 & 0 \\
+Median & 5 & 4 & 0 \\
+ABE (analogy) & 0 & 8 & 1 \\
+COCOMO-81 local calib. & 0 & 1 & 1 \\
+COCOMO-81 nominal & 0 & 1 & 1 \\
+COCOMO-81 refit & 0 & 1 & 1 \\
+Expert first estimate (reference) & 0 & 0 & 1 \\
+FP regression (log-log) & 0 & 5 & 1 \\
+MLP & 2 & 6 & 1 \\
+GBM & 0 & 7 & 2 \\
+Ridge (log) & 0 & 7 & 2 \\
+SVR & 0 & 7 & 2 \\
+Random forest & 0 & 6 & 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
