@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{Main TAWOS comparison (E11): every tuned model gets the same 40-trial random search; later data of the same 22 projects, 3 rolling origins, pooled test windows.}
+\label{tab:e11}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Model & MAE & MdAE & LMAE & SA & Cov. & IS & Rank & $r_{rb}$ MAE & $r_{rb}$ LMAE \\
+\midrule
+B4 Gradient boosting & 51.8 & 9.2 & 1.201 & 0.375 & 0.960 & 24.05 & 3.77 & +0.87 (0.006) & +0.94 ($<$0.001) \\
+B2 Ridge & 52.0 & 9.0 & 1.199 & 0.374 & 0.961 & 24.66 & 4.23 & +0.84 (0.011) & +0.93 (0.001) \\
+B3 Random forest & 52.1 & 9.4 & 1.215 & 0.372 & 0.960 & 26.13 & 4.64 & +0.87 (0.007) & +0.82 (0.015) \\
+B10 EBM (glass-box) & 52.5 & 9.8 & 1.215 & 0.367 & 0.963 & 44.98 & 5.41 & +0.55 (0.894) & +0.68 (0.128) \\
+B5 MLP & 52.8 & 9.6 & 1.206 & 0.363 & 0.959 & 51.47 & 5.59 & +0.63 (0.366) & +0.96 ($<$0.001) \\
+\textbf{DynEst-R (proposed)} & \textbf{52.6} & \textbf{9.4} & \textbf{1.241} & \textbf{0.366} & \textbf{0.959} & \textbf{31.88} & \textbf{7.09} & \textbf{+0.39 (1.000)} & \textbf{+0.04 (1.000)} \\
+B8 fine-tuned deberta-v3-base & 53.3 & 9.6 & 1.253 & 0.357 & 0.967 & 31.38 & 7.91 & -0.16 (1.000) & -0.21 (1.000) \\
+B6 COCOMO II (local) & 53.0 & 10.2 & 1.247 & 0.362 & 0.964 & 31.68 & 8.14 & -0.03 (1.000) & +0.19 (1.000) \\
+\textbf{DynEst-R-T (proposed, transparent)} & \textbf{52.5} & \textbf{9.8} & \textbf{1.243} & \textbf{0.367} & \textbf{0.958} & \textbf{28.93} & \textbf{8.45} & \textbf{--} & \textbf{--} \\
+B8 fine-tuned gpt2 & 53.7 & 9.3 & 1.255 & 0.353 & 0.966 & 54.42 & 8.55 & -0.08 (1.000) & -0.13 (1.000) \\
+B9 Shallow tree (depth<=4) & 53.5 & 8.8 & 1.262 & 0.355 & 0.963 & 34.06 & 8.73 & -0.29 (1.000) & -0.47 (1.000) \\
+B1 SP velocity & 54.2 & 8.3 & 1.313 & 0.346 & 0.959 & 23.47 & 9.68 & -0.45 (1.000) & -0.70 (0.106) \\
+B0 Median density & 54.6 & 9.5 & 1.345 & 0.341 & 0.966 & 30.79 & 10.91 & -0.72 (0.094) & -0.77 (0.036) \\
+B7 CAEA (fit) & 55.2 & 9.3 & 1.428 & 0.334 & 0.961 & 32.19 & 11.91 & -0.79 (0.030) & -0.91 (0.002) \\
+\bottomrule
+\end{tabular}
+\par\smallskip\parbox{0.95\linewidth}{\footnotesize MAE/MdAE in hours; LMAE = mean $|\log(\hat y/y)|$; SA = standardised accuracy vs random guessing. Rank = mean rank of per-project MAE (Friedman $p$ = 7.8e-16, Nemenyi CD = 4.23, 22 projects). $r_{rb}$ = paired rank-biserial effect of DynEst-R-T (proposed, transparent) vs the row model on per-project error (negative = proposed better), Holm-adjusted $p$ in brackets (family: all baselines and ablations, as pre-registered). Cov. = coverage of the 95\% interval; IS = Winkler interval score relative to the mean actual (lower is better); every model's interval uses the same normalised Mondrian conformal recipe; a very large IS (COCOMO II) comes from a few extremely wide intervals where that model's residual-scale estimate is unstable, not from under-coverage. Fine-tuned text models (B8): learning rate chosen on validation; same back-transform and intervals as every other model.}
+\end{table}

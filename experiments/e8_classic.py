@@ -31,6 +31,7 @@ from dynest.classic.models import estimators, ablations, Estimator, NeuroFuzzyCo
 
 RESULTS = Path(__file__).resolve().parent / "results"
 PROPOSED = "NeuroFuzzy (proposed)"
+TRANSPARENT = "NeuroFuzzy-T (proposed, transparent)"
 
 
 def log(*a):
@@ -126,19 +127,24 @@ def cross_dataset(S, metric, lower):
 def rule_bases(D, trials, inner):
     """Proposed model tuned and fitted on each complete dataset: its learnt rules (for the interpretability section)."""
     out = []
+    variants = ((PROPOSED, {}), (TRANSPARENT, dict(transparent=True, use_som=True, use_anfis=False, use_mamdani=True)))
     for name, ds in D.items():
-        e = Estimator(PROPOSED, NeuroFuzzyCore, nf_space).fit(ds.X, ds.y, ds, n_trials=trials, inner=inner, seed=7)
-        m = e.model
-        if not e.hp["use_mamdani"]:
-            continue
-        tab = m.fis.rule_table()
-        tab.insert(0, "dataset", name)
-        tab["n_rules"] = len(m.fis.rules)
-        tab["coverage"] = m.fis.coverage(np.column_stack(
-            [m._c_hat(m.p.transform(ds.X))] + [m.p.transform(ds.X)[:, j] for j in m.m_idx]))
-        tab["anfis_inputs"] = ", ".join((["som_prior"] if e.hp["use_som"] else []) + [m.p.names[j] for j in m.a_idx])
-        tab["target"] = "log effort per size unit" if e.hp["density"] else "log effort"
-        out.append(tab)
+        for vname, fixed in variants:
+            e = Estimator(vname, NeuroFuzzyCore, nf_space, fixed=fixed).fit(ds.X, ds.y, ds, n_trials=trials,
+                                                                            inner=inner, seed=7)
+            m = e.model
+            if not e.hp["use_mamdani"]:
+                continue
+            Z = m.p.transform(ds.X)
+            first = m.som.transform(Z)[1] if fixed else m._c_hat(Z)
+            tab = m.fis.rule_table()
+            tab.insert(0, "dataset", name)
+            tab.insert(1, "variant", vname)
+            tab["n_rules"] = len(m.fis.rules)
+            tab["coverage"] = m.fis.coverage(np.column_stack([first] + [Z[:, j] for j in m.m_idx]))
+            tab["mamdani_inputs"] = ", ".join(m.fis.input_names)
+            tab["target"] = "log effort per size unit" if e.hp["density"] else "log effort"
+            out.append(tab)
     return pd.concat(out, ignore_index=True)
 
 
@@ -203,7 +209,7 @@ def main():
     log("fitting rule bases on complete datasets")
     R = rule_bases(D, a.trials, a.inner)
     R.to_csv(RESULTS / f"e8_rules{tag}.csv", index=False)
-    print(R.groupby("dataset")[["n_rules", "coverage", "anfis_inputs", "target"]].first().to_string())
+    print(R.groupby(["dataset", "variant"])[["n_rules", "coverage", "mamdani_inputs", "target"]].first().to_string())
     log("done")
 
 

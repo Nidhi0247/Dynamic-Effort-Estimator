@@ -7,15 +7,18 @@
 \toprule
 Model & Albrecht & Kemerer & Desharnai & China & Maxwell & Kitchenha & Miyazaki9 & COCOMO81 & NASA93 & Rank \\
 \midrule
-Random forest & 0.69 & \underline{0.52} & \underline{0.57} & 0.51 & 0.68 & 0.59 & 0.55 & 0.58 & \underline{0.73} & 2.56 \\
-Ridge (log) & 0.70 & 0.47 & 0.56 & 0.52 & 0.61 & 0.55 & 0.52 & 0.77 & 0.68 & 3.67 \\
-\textbf{NeuroFuzzy (proposed)} & \textbf{0.65} & \textbf{0.51} & \textbf{0.55} & \textbf{0.50} & \textbf{0.56} & \textbf{0.60} & \textbf{0.55} & \textbf{0.57} & \textbf{0.72} & \textbf{4.22} \\
-SVR & 0.64 & 0.47 & 0.53 & 0.51 & 0.58 & \underline{0.60} & 0.54 & 0.74 & 0.68 & 4.44 \\
-ABE (analogy) & \underline{0.73} & 0.51 & 0.56 & 0.46 & 0.53 & 0.54 & 0.53 & 0.64 & 0.73 & 4.56 \\
-GBM & 0.69 & 0.39 & 0.53 & 0.51 & \underline{0.72} & 0.59 & 0.46 & 0.63 & 0.68 & 4.67 \\
-CART & 0.69 & 0.51 & 0.55 & 0.48 & 0.62 & 0.60 & 0.44 & 0.53 & 0.65 & 5.11 \\
-MLP & 0.56 & 0.35 & 0.50 & 0.47 & 0.39 & 0.52 & 0.53 & 0.76 & 0.63 & 6.89 \\
-Median & 0.38 & 0.35 & 0.33 & 0.37 & 0.34 & 0.40 & 0.44 & 0.42 & 0.36 & 8.89 \\
+Random forest & 0.69 & \underline{0.52} & 0.57 & 0.51 & 0.68 & 0.59 & 0.55 & 0.58 & \underline{0.73} & 3.22 \\
+EBM (glass-box) & 0.69 & 0.48 & 0.54 & 0.50 & 0.63 & 0.64 & 0.53 & 0.78 & 0.70 & 4.22 \\
+Ridge (log) & 0.70 & 0.47 & 0.56 & 0.52 & 0.61 & 0.55 & 0.52 & 0.77 & 0.68 & 4.89 \\
+\textbf{NeuroFuzzy (proposed)} & \textbf{0.65} & \textbf{0.51} & \textbf{0.55} & \textbf{0.50} & \textbf{0.56} & \textbf{0.60} & \textbf{0.55} & \textbf{0.57} & \textbf{0.72} & \textbf{5.56} \\
+ABE (analogy) & \underline{0.73} & 0.51 & 0.56 & 0.46 & 0.53 & 0.54 & 0.53 & 0.64 & 0.73 & 6.00 \\
+SVR & 0.64 & 0.47 & 0.53 & 0.51 & 0.58 & 0.60 & 0.54 & 0.74 & 0.68 & 6.00 \\
+Shallow tree (depth<=3) & 0.63 & 0.51 & \underline{0.59} & 0.49 & 0.60 & \underline{0.66} & 0.50 & 0.55 & 0.68 & 6.11 \\
+GBM & 0.69 & 0.39 & 0.53 & 0.51 & \underline{0.72} & 0.59 & 0.46 & 0.63 & 0.68 & 6.33 \\
+\textbf{NeuroFuzzy-T (proposed, transparent)} & \textbf{0.61} & \textbf{0.52} & \textbf{0.55} & \textbf{0.49} & \textbf{0.52} & \textbf{0.55} & \textbf{0.52} & \textbf{0.59} & \textbf{0.72} & \textbf{7.00} \\
+CART & 0.69 & 0.51 & 0.55 & 0.48 & 0.62 & 0.60 & 0.44 & 0.53 & 0.65 & 7.33 \\
+MLP & 0.56 & 0.35 & 0.50 & 0.47 & 0.39 & 0.52 & 0.53 & 0.76 & 0.63 & 9.44 \\
+Median & 0.38 & 0.35 & 0.33 & 0.37 & 0.34 & 0.40 & 0.44 & 0.42 & 0.36 & 11.89 \\
 COCOMO-81 local calib. & -- & -- & -- & -- & -- & -- & -- & 0.80 & 0.46 & -- \\
 COCOMO-81 nominal & -- & -- & -- & -- & -- & -- & -- & \underline{0.84} & 0.50 & -- \\
 COCOMO-81 refit & -- & -- & -- & -- & -- & -- & -- & 0.76 & 0.66 & -- \\
@@ -23,5 +26,5 @@ FP regression (log-log) & 0.71 & 0.49 & 0.50 & \underline{0.53} & 0.53 & 0.53 & 
 KLOC power law (log-log) & -- & -- & -- & -- & -- & -- & \underline{0.56} & 0.61 & 0.58 & -- \\
 \bottomrule
 \end{tabular}
-\par\smallskip\parbox{0.95\linewidth}{\footnotesize 3$\times$10-fold cross-validation, identical folds and tuning budget for every model; best per dataset underlined. Rank = mean SA rank over the datasets where every model applies (Friedman $p$ = 5.6e-05, Nemenyi CD = 4.00). COCOMO-81 variants need effort multipliers (COCOMO81, NASA93 only); Boehm calibrated the nominal constants on COCOMO81 itself.}
+\par\smallskip\parbox{0.95\linewidth}{\footnotesize 3$\times$10-fold cross-validation, identical folds and tuning budget for every model; best per dataset underlined. Rank = mean SA rank over the datasets where every model applies (Friedman $p$ = 2.7e-05, Nemenyi CD = 5.55). COCOMO-81 variants need effort multipliers (COCOMO81, NASA93 only); Boehm calibrated the nominal constants on COCOMO81 itself.}
 \end{table}

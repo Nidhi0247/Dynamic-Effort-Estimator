@@ -1,0 +1,17 @@
+,0
+ABE (analogy),5.5
+ANFIS only,3.0
+CART,12.5
+EBM (glass-box),8.0
+GBM,10.0
+MLP,14.0
+Median,12.5
+NF -ANFIS,8.0
+NF -Mamdani,4.5
+NF -SOM,8.0
+NeuroFuzzy (proposed),3.0
+"NeuroFuzzy-T (proposed, transparent)",16.0
+Random forest,12.5
+Ridge (log),4.0
+SVR,2.5
+Shallow tree (depth<=3),12.0

@@ -30,3 +30,11 @@ classic_benchmark:     # E8; added 2026-11-22 BEFORE the full E8 run (only a 2-d
                 paired rank-biserial r_rb; across datasets Friedman + Nemenyi on SA and LMAE"
   interval_metric: coverage of the 95% split-conformal interval (all models, same recipe), relative width, interval score
   caveat: "COCOMO-81 nominal constants were calibrated by Boehm on COCOMO81 itself (optimistic on that dataset)"
+
+amendment_2026_11_22:  # added AFTER E1/E2/E8 results were seen, in response to an internal review; reported as such
+  reason: "unequal tuning budget on TAWOS; Mamdani rules read a latent score; no interpretable competitors"
+  added_models: ["DynEst-R-T / NeuroFuzzy-T (transparent Mamdani inputs)", "B9 shallow tree", "B10 EBM",
+                 "B8 fine-tuned deberta-v3-base (learning rate chosen on validation)"]
+  protocol_change: "E11 = E1 with 40 random-search trials for EVERY tuned model (DynEst-R previously 8)"
+  status: "secondary; primary pre-registered endpoints and their results are unchanged and still reported"
+  expected_rule_directions: "declared in experiments/e11_equal_budget.py (EXPECTED) before E11 was run"

@@ -1,0 +1,152 @@
+15:23:40 origin 0: train=11495 val=2195 test=2194 model=microsoft/deberta-v3-base
+15:23:40   origin 0: lr=2e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+15:27:47   origin 0 epoch 0: val MAE 48.35 h (240s)
+15:32:10   origin 0 epoch 1: val MAE 48.11 h (263s)
+15:36:44   origin 0 epoch 2: val MAE 48.18 h (274s)
+15:37:54   log-density quantiles (1/50/99%): [-1.12  1.08  2.31] train range [-4.61, 7.46]
+15:39:05   log-density quantiles (1/50/99%): [-1.13  1.12  2.33] train range [-4.61, 7.46]
+15:39:05   origin 0: lr=2e-05 best val MAE 48.11 h
+15:39:05   origin 0: lr=5e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+15:42:09   origin 0 epoch 0: val MAE 48.48 h (180s)
+15:45:09   origin 0 epoch 1: val MAE 48.25 h (179s)
+15:48:11   origin 0 epoch 2: val MAE 48.44 h (182s)
+15:48:20   log-density quantiles (1/50/99%): [-1.09  1.09  2.39] train range [-4.61, 7.46]
+15:48:29   log-density quantiles (1/50/99%): [-1.07  1.12  2.39] train range [-4.61, 7.46]
+15:48:29   origin 0: lr=5e-05 best val MAE 48.25 h
+15:48:31 origin 1: train=13594 val=2194 test=2191 model=microsoft/deberta-v3-base
+15:48:31   origin 1: lr=2e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+15:52:09   origin 1 epoch 0: val MAE 48.88 h (211s)
+15:55:43   origin 1 epoch 1: val MAE 47.95 h (213s)
+15:59:14   origin 1 epoch 2: val MAE 48.38 h (211s)
+15:59:23   log-density quantiles (1/50/99%): [-1.01  1.59  2.38] train range [-4.61, 8.04]
+15:59:32   log-density quantiles (1/50/99%): [-1.09  1.58  2.4 ] train range [-4.61, 8.04]
+15:59:32   origin 1: lr=2e-05 best val MAE 47.95 h
+15:59:32   origin 1: lr=5e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+16:03:09   origin 1 epoch 0: val MAE 48.55 h (211s)
+16:06:42   origin 1 epoch 1: val MAE 48.17 h (213s)
+16:10:15   origin 1 epoch 2: val MAE 48.22 h (212s)
+16:10:24   log-density quantiles (1/50/99%): [-0.65  1.47  2.15] train range [-4.61, 8.04]
+16:10:33   log-density quantiles (1/50/99%): [-0.81  1.44  2.13] train range [-4.61, 8.04]
+16:10:34   origin 1: lr=5e-05 best val MAE 48.17 h
+16:10:39 origin 2: train=16071 val=2191 test=2194 model=microsoft/deberta-v3-base
+16:10:39   origin 2: lr=2e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+16:14:57   origin 2 epoch 0: val MAE 65.00 h (252s)
+16:19:09   origin 2 epoch 1: val MAE 64.16 h (252s)
+16:23:22   origin 2 epoch 2: val MAE 64.11 h (251s)
+16:23:32   log-density quantiles (1/50/99%): [-1.12  1.26  2.64] train range [-4.85, 8.32]
+16:23:41   log-density quantiles (1/50/99%): [-1.14  1.31  2.72] train range [-4.85, 8.32]
+16:23:41   origin 2: lr=2e-05 best val MAE 64.11 h
+16:23:41   origin 2: lr=5e-05
+[transformers] [1mDebertaV2Model LOAD REPORT[0m from: microsoft/deberta-v3-base
+Key                                     | Status     |  | 
+----------------------------------------+------------+--+-
+mask_predictions.dense.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.bias             | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED |  | 
+mask_predictions.classifier.bias        | UNEXPECTED |  | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED |  | 
+mask_predictions.classifier.weight      | UNEXPECTED |  | 
+mask_predictions.dense.weight           | UNEXPECTED |  | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED |  | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED |  | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+16:27:54   origin 2 epoch 0: val MAE 65.35 h (247s)
+16:32:09   origin 2 epoch 1: val MAE 64.78 h (255s)
+16:36:14   origin 2 epoch 2: val MAE 64.78 h (245s)
+16:36:24   log-density quantiles (1/50/99%): [-1.21  1.16  2.48] train range [-4.85, 8.32]
+16:36:33   log-density quantiles (1/50/99%): [-1.2   1.21  2.52] train range [-4.85, 8.32]
+16:36:33   origin 2: lr=5e-05 best val MAE 64.78 h
+16:36:34 wrote experiments\results\e10_text_deberta-v3-base_raw.csv
+ origin    MAE  MdAE  LMAE    SA  coverage  rel_width
+      0 48.537 9.662 1.250 0.356     0.957     26.742
+      1 64.566 9.292 1.282 0.312     0.965     44.684
+      2 46.878 9.770 1.227 0.405     0.978     48.279

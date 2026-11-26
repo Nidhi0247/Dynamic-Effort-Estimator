@@ -1,0 +1,56 @@
+dataset,variant,rule,support,weight,n_rules,coverage,mamdani_inputs,target
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS very_low AND RawFPcounts IS low THEN effort IS medium,1,0.748,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS very_low AND RawFPcounts IS medium THEN effort IS medium,3,1.661,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS low AND RawFPcounts IS low THEN effort IS fairly_low,3,2.136,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS low AND RawFPcounts IS medium THEN effort IS high,3,2.343,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS medium AND RawFPcounts IS low THEN effort IS very_low,1,0.945,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS medium AND RawFPcounts IS medium THEN effort IS low,4,2.637,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS high AND RawFPcounts IS low THEN effort IS low,1,0.569,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS high AND RawFPcounts IS medium THEN effort IS fairly_low,3,1.923,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS very_high AND RawFPcounts IS medium THEN effort IS low,1,0.998,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,NeuroFuzzy (proposed),IF c_hat IS very_high AND RawFPcounts IS high THEN effort IS very_high,4,2.927,10,1.0,"c_hat, RawFPcounts",log effort per size unit
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND AdjFP IS low AND Output IS low THEN effort IS extremely_low,4,3.142,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND AdjFP IS medium AND Output IS low THEN effort IS fairly_low,1,0.336,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND AdjFP IS medium AND Output IS medium THEN effort IS low,1,0.564,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND AdjFP IS medium AND Output IS high THEN effort IS very_high,1,0.229,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND AdjFP IS low AND Output IS low THEN effort IS low,3,1.183,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND AdjFP IS medium AND Output IS medium THEN effort IS medium,9,4.355,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND AdjFP IS medium AND Output IS high THEN effort IS medium,1,0.396,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND AdjFP IS high AND Output IS high THEN effort IS extremely_high,2,1.304,9,1.0,"similar-project prior, AdjFP, Output",log effort
+Albrecht,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND AdjFP IS high AND Output IS high THEN effort IS extremely_high,2,1.259,9,1.0,"similar-project prior, AdjFP, Output",log effort
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS very_low AND virt IS low THEN effort IS fairly_low,4,3.541,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS very_low AND virt IS medium THEN effort IS medium,5,3.088,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS very_low AND virt IS high THEN effort IS medium,1,0.983,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS low AND virt IS low THEN effort IS fairly_low,11,8.629,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS low AND virt IS medium THEN effort IS fairly_low,5,3.809,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS low AND virt IS high THEN effort IS very_high,1,0.806,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS medium AND virt IS low THEN effort IS medium,3,2.51,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS medium AND virt IS medium THEN effort IS high,6,3.737,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS medium AND virt IS high THEN effort IS high,6,3.893,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS high AND virt IS low THEN effort IS fairly_high,1,0.914,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS high AND virt IS medium THEN effort IS high,6,4.093,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS high AND virt IS high THEN effort IS fairly_high,6,5.085,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS very_high AND virt IS medium THEN effort IS fairly_high,5,4.23,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,NeuroFuzzy (proposed),IF c_hat IS very_high AND virt IS high THEN effort IS very_high,3,2.298,14,1.0,"c_hat, virt",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_low AND time IS low AND stor IS low THEN effort IS low,7,6.08,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_low AND time IS low AND stor IS medium THEN effort IS fairly_low,2,1.526,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_low AND time IS medium AND stor IS medium THEN effort IS fairly_low,1,0.989,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND time IS low AND stor IS low THEN effort IS fairly_low,9,7.116,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND time IS low AND stor IS medium THEN effort IS fairly_low,5,3.596,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS low AND time IS medium AND stor IS medium THEN effort IS medium,3,2.004,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND time IS medium AND stor IS low THEN effort IS fairly_high,1,0.795,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND time IS medium AND stor IS medium THEN effort IS medium,3,1.377,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND time IS high AND stor IS medium THEN effort IS high,2,1.079,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS medium AND time IS high AND stor IS high THEN effort IS high,1,0.888,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS low AND stor IS low THEN effort IS low,2,1.714,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS low AND stor IS medium THEN effort IS fairly_high,2,1.542,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS medium AND stor IS medium THEN effort IS fairly_high,4,2.94,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS medium AND stor IS high THEN effort IS high,1,0.698,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS high AND stor IS medium THEN effort IS high,3,1.598,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS high AND time IS high AND stor IS high THEN effort IS high,3,2.303,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS low AND stor IS low THEN effort IS low,1,0.978,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS low AND stor IS medium THEN effort IS medium,1,0.605,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS medium AND stor IS medium THEN effort IS medium,6,3.572,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS medium AND stor IS high THEN effort IS medium,1,0.498,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS high AND stor IS medium THEN effort IS fairly_high,3,1.507,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit
+COCOMO81,"NeuroFuzzy-T (proposed, transparent)",IF similar-project prior IS very_high AND time IS high AND stor IS high THEN effort IS fairly_high,2,1.107,22,0.9841269841269841,"similar-project prior, time, stor",log effort per size unit

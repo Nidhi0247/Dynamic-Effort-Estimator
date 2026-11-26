@@ -18,13 +18,15 @@ from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModel, AutoTokenizer
 
 from dynest.calibration import mae_shift
+
+AMP = True                                   # bf16 autocast; DeBERTa-v3 needs --fp32 (NaN in bf16)
 from e1_accuracy import baseline_intervals, per_project, with_features
 
 
 class Regressor(torch.nn.Module):
     def __init__(self, name):
         super().__init__()
-        self.enc = AutoModel.from_pretrained(name)
+        self.enc = AutoModel.from_pretrained(name, dtype=torch.float32)   # newer transformers may load fp16
         self.last_token = "gpt" in name.lower()
         hs = self.enc.config.hidden_size                     # LayerNorm tames GPT-2's outlier activations
         self.head = torch.nn.Sequential(torch.nn.LayerNorm(hs), torch.nn.Dropout(0.1), torch.nn.Linear(hs, 1))
@@ -39,7 +41,10 @@ class Regressor(torch.nn.Module):
 
 
 def texts(df):
-    return [f"[SP {sp:g}] {t}" for sp, t in zip(df.sp.values, df.text.fillna("").values)]
+    """Decision-time metadata every other model also receives (SP, type, priority), then the as-of text."""
+    return [f"[SP {sp:g}] [{ty}] [{pr}] {t}" for sp, ty, pr, t in
+            zip(df.sp.values, df.issuetype_t.fillna("?").astype(str).values, df.priority_t.fillna("?").astype(str).values,
+                df.text.fillna("").values)]
 
 
 def encode(tok, df, max_len):
@@ -51,7 +56,7 @@ def predict_z(model, ids, mask, dev, bs=64, lo=-np.inf, hi=np.inf):
     """Standardised predictions, clipped to the range observed in the training targets."""
     model.eval()
     out = []
-    with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
+    with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16, enabled=AMP):
         for i in range(0, len(ids), bs):
             out.append(model(ids[i:i + bs].to(dev), mask[i:i + bs].to(dev)).float().cpu())
     return np.clip(torch.cat(out).numpy(), lo, hi)
@@ -90,7 +95,7 @@ def run_origin(k, tr, va, te, a, dev):
         model.train()
         t0 = time.time()
         for ids, mask, y in dl:
-            with torch.autocast("cuda", dtype=torch.bfloat16):
+            with torch.autocast("cuda", dtype=torch.bfloat16, enabled=AMP):
                 loss = torch.nn.functional.l1_loss(model(ids.to(dev), mask.to(dev)).float(), y.to(dev))
             opt.zero_grad()
             loss.backward()
@@ -113,29 +118,43 @@ def run_origin(k, tr, va, te, a, dev):
         hours.update(dict(zip(df.issue_id.values, df.sp.values * np.exp(z + shift))))
     del model
     torch.cuda.empty_cache()
-    return hours
+    return best[0], hours
 
 
 def main():
     a = args([(["--model"], dict(default="gpt2")), (["--epochs"], dict(type=int, default=4)),
-              (["--lr"], dict(type=float, default=3e-5)), (["--batch"], dict(type=int, default=16)),
+              (["--lr"], dict(type=float, default=3e-5)),
+              (["--lrs"], dict(default="3e-5", help="comma-separated learning-rate grid (chosen on validation)")),
+              (["--tag"], dict(default="")),
+              (["--fp32"], dict(action="store_true")), (["--batch"], dict(type=int, default=16)),
               (["--max-len"], dict(type=int, default=256, dest="max_len"))])
     dev = "cuda"
+    global AMP
+    AMP = not a.fp32
     assert torch.cuda.is_available(), "run with the CUDA environment (venv-gpu)"
-    name = f"B8 fine-tuned {a.model.split('/')[-1]}"
+    short = a.model.split('/')[-1] + (f"-{a.tag}" if a.tag else "")
+    name = f"B8 fine-tuned {short}"
     rows = []
     for k, (f, tr, va, te) in enumerate(origin_splits(a.smoke)):
         if a.smoke:
             tr, va, te = tr.sample(800, random_state=0), va.head(300), te.head(300)
         log(f"origin {k}: train={len(tr)} val={len(va)} test={len(te)} model={a.model}")
-        hours = run_origin(k, tr, va, te, a, dev)
+        best = None
+        for lr in [float(x) for x in a.lrs.split(",")]:              # learning rate chosen on validation MAE
+            a.lr = lr
+            log(f"  origin {k}: lr={lr:g}")
+            res = run_origin(k, tr, va, te, a, dev)
+            log(f"  origin {k}: lr={lr:g} best val MAE {res[0]:.2f} h")
+            if best is None or res[0] < best[0]:
+                best = res
+        hours = best[1]
         b = TextB(name, hours)
         m = fitted_model(k, tr, va, a.backend, a.smoke)              # only for the shared interval features
         VA, TE = with_features(m, va), with_features(m, te)
         pt, lo, hi = baseline_intervals(m, b, VA, TE, seed=k)
         rows += per_project(name, k, te, pt, tr, lo, hi)
     R = pd.DataFrame(rows)
-    save(R, f"e10_text_{a.model.split('/')[-1]}{'_smoke' if a.smoke else ''}_raw.csv")
+    save(R, f"e10_text_{short}{'_smoke' if a.smoke else ''}_raw.csv")
     print(R[R.project_id == "ALL"][["origin", "MAE", "MdAE", "LMAE", "SA", "coverage", "rel_width"]].round(3)
           .to_string(index=False))
 

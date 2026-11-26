@@ -53,9 +53,9 @@ def tabular(df, cols, align, caption, label, bold_rows=None, note=None, size="\\
     return "\n".join(lines) + "\n"
 
 
-def vs_proposed(table, lower):
+def vs_proposed(table, lower, ref=None):
     out = stats.compare(table, lower_is_better=lower)
-    prop = [c for c in table if is_prop(c)][0]
+    prop = ref or [c for c in table if is_prop(c)][0]
     pw = out["pairwise"]
     res = {}
     for _, r in pw.iterrows():
@@ -67,7 +67,7 @@ def vs_proposed(table, lower):
 
 
 # ---------------------------------------------------------------------------------------------- E1 / E2
-def accuracy_table(raw, unit_col, name, caption, label, with_ci=True):
+def accuracy_table(raw, unit_col, name, caption, label, with_ci=True, ref=None, extra_note=""):
     proj = raw[raw[unit_col].astype(str) != "ALL"] if unit_col == "project_id" and "origin" in raw else raw
     if "origin" in raw:
         pooled = raw[raw.project_id.astype(str) == "ALL"].groupby("model").mean(numeric_only=True)
@@ -80,8 +80,9 @@ def accuracy_table(raw, unit_col, name, caption, label, with_ci=True):
     t_mae = unit.MAE.unstack()[proj_models]
     # Holm family as pre-registered (configs/endpoints.yaml): proposed vs every baseline AND every ablation
     out = stats.compare(t_mae, lower_is_better=True)
-    _, pm = vs_proposed(unit.MAE.unstack(), True)
-    _, pl = vs_proposed(unit.LMAE.unstack(), True)
+    _, pm = vs_proposed(unit.MAE.unstack(), True, ref)
+    _, pl = vs_proposed(unit.LMAE.unstack(), True, ref)
+    ref = ref or [c for c in proj_models if is_prop(c)][0]
     rows = []
     for m in sorted(proj_models, key=lambda m: out["mean_rank"][m]):
         r = pooled.loc[m]
@@ -89,17 +90,17 @@ def accuracy_table(raw, unit_col, name, caption, label, with_ci=True):
         isr = f"{r.interval_score_rel:.2f}" if "interval_score_rel" in r and pd.notna(r.get("interval_score_rel")) else "--"
         rows.append([tex(m), f"{r.MAE:.1f}", f"{r.MdAE:.1f}", f"{r.LMAE:.3f}", f"{r.SA:.3f}", cov, isr,
                      f"{out['mean_rank'][m]:.2f}",
-                     "--" if is_prop(m) else f"{pm[m][1]:+.2f} ({fmt_p(pm[m][0])})",
-                     "--" if is_prop(m) else f"{pl[m][1]:+.2f} ({fmt_p(pl[m][0])})"])
+                     "--" if m == ref else f"{pm[m][1]:+.2f} ({fmt_p(pm[m][0])})",
+                     "--" if m == ref else f"{pl[m][1]:+.2f} ({fmt_p(pl[m][0])})"])
     df = pd.DataFrame(rows)
     note = (f"MAE/MdAE in hours; LMAE = mean $|\\log(\\hat y/y)|$; SA = standardised accuracy vs random guessing. "
             f"Rank = mean rank of per-project MAE (Friedman $p$ = {out.get('friedman_p', np.nan):.2g}, "
             f"Nemenyi CD = {out['cd_nemenyi']:.2f}, {out['n_units']} projects). "
-            "$r_{rb}$ = paired rank-biserial effect of the proposed model vs the row model on per-project error "
+            f"$r_{{rb}}$ = paired rank-biserial effect of {tex(ref)} vs the row model on per-project error "
             "(negative = proposed better), Holm-adjusted $p$ in brackets (family: all baselines and ablations, as pre-registered). Cov. = coverage of the 95\\% interval; "
             "IS = Winkler interval score relative to the mean actual (lower is better); every model's interval "
             "uses the same normalised Mondrian conformal recipe; a very large IS (COCOMO II) comes from a few extremely wide "
-            "intervals where that model's residual-scale estimate is unstable, not from under-coverage.")
+            "intervals where that model's residual-scale estimate is unstable, not from under-coverage. " + extra_note)
     write(name, tabular(df, ["Model", "MAE", "MdAE", "LMAE", "SA", "Cov.", "IS", "Rank", "$r_{rb}$ MAE", "$r_{rb}$ LMAE"],
                         "lrrrrrrrrr", caption, label, [is_prop(x) for x in df[0]], note,
                         size="\\scriptsize"))
@@ -131,6 +132,40 @@ def e1_e2():
     num("ETwoCov", pooled2.loc[prop2, "coverage"], "{:.3f}")
     num("ETwoMAE", pooled2.loc[prop2, "MAE"], "{:.1f}")
     num("ETwoWidth", pooled2.loc[prop2, "rel_width"], "{:.0f}")
+
+
+def e11():
+    """Main TAWOS table: equal 40-trial budget for every tuned model, plus the fine-tuned text baselines (B8)."""
+    R = pd.read_csv(RES / "e11_equal_budget_raw.csv")
+    for f in sorted(RES.glob("e10_text_*_raw.csv")):
+        if "smoke" not in f.name:
+            R = pd.concat([R, pd.read_csv(f)], ignore_index=True)
+    R["project_id"] = R.project_id.astype(str)
+    T = "DynEst-R-T (proposed, transparent)"
+    pooled, out = accuracy_table(R, "project_id", "tab_e11", "Main TAWOS comparison (E11): every tuned model gets "
+                                 "the same 40-trial random search; later data of the same 22 projects, 3 rolling "
+                                 "origins, pooled test windows.", "tab:e11", ref=T,
+                                 extra_note="Fine-tuned text models (B8): learning rate chosen on validation; same "
+                                            "back-transform and intervals as every other model.")
+    F = "DynEst-R (proposed)"
+    num("ElevenMAEfull", pooled.loc[F, "MAE"], "{:.1f}")
+    num("ElevenMAEt", pooled.loc[T, "MAE"], "{:.1f}")
+    num("ElevenSAt", pooled.loc[T, "SA"], "{:.3f}")
+    num("ElevenCovT", pooled.loc[T, "coverage"], "{:.3f}")
+    num("ElevenRankT", out["mean_rank"][T])
+    num("ElevenCD", out["cd_nemenyi"])
+    for key, m in (("EBM", "B10 EBM (glass-box)"), ("Tree", "B9 Shallow tree (depth<=4)"), ("GBM", "B4 Gradient boosting"),
+                   ("Ridge", "B2 Ridge")):
+        if m in pooled.index:
+            num(f"ElevenMAE{key}", pooled.loc[m, "MAE"], "{:.1f}")
+    M = pd.read_csv(RES / "e11_transparent_monotonicity.csv")
+    num("TMonoMin", M.consistent.min() * 100, "{:.0f}")
+    num("TMonoMean", (M.consistent * M.pairs).sum() / M.pairs.sum() * 100, "{:.0f}")
+    Ru = pd.read_csv(RES / "e11_transparent_rules.csv")
+    n = Ru.groupby("origin").size()
+    num("TRulesMin", int(n.min()), "{}")
+    num("TRulesMax", int(n.max()), "{}")
+    num("TInputs", Ru.inputs.iloc[0].replace("_", "\_"), "{}")
 
 
 # ---------------------------------------------------------------------------------------------- E8
@@ -239,7 +274,7 @@ def e5():
 
 
 def main():
-    for f in (e0, e1_e2, e8, e9, e5):
+    for f in (e0, e1_e2, e11, e8, e9, e5):
         try:
             f()
         except Exception as e:

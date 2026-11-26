@@ -118,7 +118,15 @@ class DynEstR:
             B_tr["c_hat"], B_va["c_hat"] = B_tr.som_prior, B_va.som_prior
 
         # S5 Mamdani
-        self.mcols = list(c["mamdani_inputs"])
+        if c["mamdani_inputs"] == "auto":
+            # transparent variant: the SOM prior ("typical hours/SP of similar past work") plus the two measured,
+            # human-readable features most related to the target on the training window (|Spearman rho|)
+            from scipy.stats import spearmanr
+            cand = [x for x in MEASURED if not x.startswith("type_") and B_tr[x].nunique() > 5]
+            rho = {x: abs(spearmanr(B_tr[x].values, y_tr).statistic) for x in cand}
+            self.mcols = ["som_prior"] + sorted(cand, key=lambda x: -np.nan_to_num(rho[x]))[:2]
+        else:
+            self.mcols = list(c["mamdani_inputs"])
         if c["mamdani"] == "learned":
             self.fis = LearnedMamdani(self.mcols, c["mamdani_terms"], c["mamdani_out"], c["min_support"],
                                       seed=c["seed"])

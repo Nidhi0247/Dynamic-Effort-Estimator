@@ -196,6 +196,19 @@ class MLPCore(SklearnCore):
                             random_state=self.seed)
 
 
+class ShallowTreeCore(SklearnCore):
+    def build(self):
+        return DecisionTreeRegressor(max_depth=self.hp["depth"], min_samples_leaf=self.hp["leaf"], random_state=self.seed)
+
+
+class EBMCore(SklearnCore):
+    def build(self):
+        from interpret.glassbox import ExplainableBoostingRegressor
+        return ExplainableBoostingRegressor(learning_rate=self.hp["lr"], interactions=self.hp["inter"],
+                                            max_leaves=self.hp["leaves"], min_samples_leaf=self.hp["leaf"],
+                                            outer_bags=4, n_jobs=1, random_state=self.seed)
+
+
 class ABECore(Core):
     """Analogy-based estimation: k nearest projects (Euclidean, standardised predictors), tuned adaptation."""
     def fit(self, X, y):
@@ -274,11 +287,17 @@ class NeuroFuzzyCore(Core):
         else:
             c_hat = A[:, 0]
 
-        # S5: learned Mamdani on [c_hat, next-ranked predictors]
-        if h["use_mamdani"]:
+        # S5: learned Mamdani on [c_hat, next-ranked predictors]; transparent: [SOM prior, top-2 predictors]
+        if h.get("transparent"):
+            self.m_idx = self.order[:2]
+            M = np.column_stack([prior] + [Z[:, j] for j in self.m_idx])
+            names = ["similar-project prior"] + [self.p.names[j] for j in self.m_idx]
+            terms = [h["terms0"]] + [3] * len(self.m_idx)          # Kitchenham has a single predictor
+        if h["use_mamdani"] and not h.get("transparent"):
             M = np.column_stack([c_hat] + [Z[:, j] for j in self.m_idx])
             names = ["c_hat"] + [self.p.names[j] for j in self.m_idx]
             terms = [h["terms0"]] + [3] * len(self.m_idx)
+        if h["use_mamdani"]:
             perm = rng.permutation(n)                              # GA hold-out is the tail: shuffle first
             self.fis = LearnedMamdani(names, terms, h["n_out"], h["min_support"], seed=self.seed)
             self.fis.fit(M[perm], t[perm], tune=True, gens=h["gens"])
@@ -303,6 +322,9 @@ class NeuroFuzzyCore(Core):
 
     def predict_log(self, X):
         Z = self.p.transform(X)
+        if self.hp.get("transparent"):
+            prior = self.som.transform(Z)[1]
+            return self._untarget(X, self.fis.predict(np.column_stack([prior] + [Z[:, j] for j in self.m_idx])))
         c = self._c_hat(Z)
         if self.hp["use_mamdani"]:
             z = self.fis.predict(np.column_stack([c] + [Z[:, j] for j in self.m_idx]))
@@ -344,6 +366,9 @@ SPACES = {
                              sub=_ch(r, [0.7, 1.0]), density=_ch(r, [True, False])),
     "MLP": lambda r, n: dict(hidden=_ch(r, [(8,), (16,), (32,), (16, 8)]), alpha=_lu(r, -4, 0.5),
                              lr=_ch(r, [1e-3, 1e-2]), density=_ch(r, [True, False])),
+    "ShallowTree": lambda r, n: dict(depth=_ch(r, [1, 2, 3]), leaf=_ch(r, [2, 3, 5, 8]), density=_ch(r, [True, False])),
+    "EBM": lambda r, n: dict(lr=_lu(r, -2.5, -1.3), inter=_ch(r, [0, 3, 5]), leaves=_ch(r, [2, 3]),
+                             leaf=_ch(r, [2, 3, 5]), density=_ch(r, [True, False])),
     "ABE": lambda r, n: dict(k=_ch(r, [1, 2, 3, 4, 5]), adapt=_ch(r, ["mean", "median", "idw", "size"])),
     "COCOMO refit": lambda r, n: dict(alpha=_lu(r, -2, 2)),
     "NeuroFuzzy": nf_space,
@@ -405,6 +430,8 @@ def estimators(ds):
     """The model set applicable to dataset ds (COCOMO variants only where the multipliers exist)."""
     size_name = "FP regression (log-log)" if ds.kind == "FP" else "KLOC power law (log-log)"
     E = [Estimator("NeuroFuzzy (proposed)", NeuroFuzzyCore, SPACES["NeuroFuzzy"]),
+         Estimator("NeuroFuzzy-T (proposed, transparent)", NeuroFuzzyCore, SPACES["NeuroFuzzy"],
+                   fixed=dict(transparent=True, use_som=True, use_anfis=False, use_mamdani=True)),
          Estimator("Median", MedianCore),
          Estimator(size_name, SizeRegCore)]
     if ds.em:
@@ -414,6 +441,8 @@ def estimators(ds):
     E += [Estimator("ABE (analogy)", ABECore, SPACES["ABE"]),
           Estimator("Ridge (log)", RidgeCore, SPACES["Ridge"]),
           Estimator("CART", CARTCore, SPACES["CART"]),
+          Estimator("Shallow tree (depth<=3)", ShallowTreeCore, SPACES["ShallowTree"]),
+          Estimator("EBM (glass-box)", EBMCore, SPACES["EBM"]),
           Estimator("SVR", SVRCore, SPACES["SVR"]),
           Estimator("Random forest", RFCore, SPACES["RF"]),
           Estimator("GBM", GBMCore, SPACES["GBM"]),

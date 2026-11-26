@@ -53,6 +53,16 @@ def save(fig, name):
     print("wrote", (OUT / f"{name}.pdf").relative_to(ROOT))
 
 
+def main_raw():
+    """E11 equal-budget TAWOS results plus the fine-tuned text baselines (B8)."""
+    R = pd.read_csv(RES / "e11_equal_budget_raw.csv")
+    for f in sorted(RES.glob("e10_text_*_raw.csv")):
+        if "smoke" not in f.name:
+            R = pd.concat([R, pd.read_csv(f)], ignore_index=True)
+    R["project_id"] = R.project_id.astype(str)
+    return R
+
+
 def need(*files):
     missing = [f for f in files if not (RES / f).exists()]
     if missing:
@@ -69,7 +79,7 @@ def rank_panel(ax, table, lower, title, xlabel):
         ax.plot([1, v], [yi, yi], color=GRID, lw=1.2, zorder=1)
         ax.scatter(v, yi, s=34, color=COL[role(m)], zorder=3, edgecolor="white", linewidth=1.5)
     ax.set_yticks(y)
-    ax.set_yticklabels(r.index)
+    ax.set_yticklabels([str(m).replace("proposed, transparent", "transparent") for m in r.index])
     for lab, m in zip(ax.get_yticklabels(), r.index):
         if role(m) == "proposed":
             lab.set_fontweight("bold")
@@ -85,9 +95,9 @@ def rank_panel(ax, table, lower, title, xlabel):
 
 
 def fig_ranks():
-    if not need("e1_accuracy_raw.csv", "e2_unseen_projects.csv", "e8_summary.csv"):
+    if not need("e11_equal_budget_raw.csv", "e2_unseen_projects.csv", "e8_summary.csv"):
         return
-    e1 = pd.read_csv(RES / "e1_accuracy_raw.csv")
+    e1 = main_raw()
     e1 = e1[e1.project_id.astype(str) != "ALL"]
     e1 = e1[~e1.model.map(role).eq("ablation")]
     t1 = e1.groupby(["project_id", "model"]).MAE.mean().unstack()
@@ -96,23 +106,23 @@ def fig_ranks():
     e8 = pd.read_csv(RES / "e8_summary.csv")
     e8 = e8[~e8.model.str.startswith("Expert") & ~e8.model.map(role).eq("ablation")]
     t8 = e8.pivot_table(index="dataset", columns="model", values="SA").dropna(axis=1)
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4.2), gridspec_kw=dict(wspace=0.75))
-    rank_panel(axes[0], t1, True, "E1 TAWOS, later data (MAE)", "mean rank over projects (1 = best)")
-    rank_panel(axes[1], t2, True, "E2 TAWOS, unseen projects (MAE)", "mean rank over held-out projects")
-    rank_panel(axes[2], t8, False, "E8 classic FP/COCOMO datasets (SA)", "mean rank over datasets")
+    fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.4), gridspec_kw=dict(wspace=0.95))
+    rank_panel(axes[0], t1, True, "TAWOS, equal budget (MAE)", "mean rank over projects (1 = best)")
+    rank_panel(axes[1], t2, True, "TAWOS, unseen projects (MAE)", "mean rank over held-out projects")
+    rank_panel(axes[2], t8, False, "Classic FP/COCOMO datasets (SA)", "mean rank over datasets")
     save(fig, "fig_ranks")
 
 
 # ---------------------------------------------------------------------------------------------- uncertainty
 def fig_intervals():
-    if not need("e1_accuracy_raw.csv", "e8_summary.csv"):
+    if not need("e11_equal_budget_raw.csv", "e8_summary.csv"):
         return
-    e1 = pd.read_csv(RES / "e1_accuracy_raw.csv")
+    e1 = main_raw()
     a = e1[e1.project_id.astype(str) == "ALL"].groupby("model")[["coverage", "rel_width"]].mean().dropna()
     e8 = pd.read_csv(RES / "e8_summary.csv").dropna(subset=["coverage"])
     b = e8.groupby("model")[["coverage", "rel_width"]].median()
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), gridspec_kw=dict(wspace=0.3))
-    for ax, d, title in ((axes[0], a, "E1 TAWOS requirements (pooled test)"),
+    for ax, d, title in ((axes[0], a, "TAWOS requirements, equal budget (pooled test)"),
                          (axes[1], b, "E8 classic datasets (median over datasets)")):
         for yy in (0.92, 0.98):
             ax.axhline(yy, color=GREY, lw=0.6, ls=":", zorder=1)

@@ -145,6 +145,31 @@ class MLPB(_Tuned):
                                                             max_iter=500, random_state=self.seed))
 
 
+class ShallowTreeB(_Tuned):
+    """B9: depth-limited regression tree -- a directly readable model (interpretable baseline)."""
+    name = "B9 Shallow tree (depth<=4)"
+
+    def space(self, rng):
+        return dict(max_depth=int(rng.choice([2, 3, 4])), min_samples_leaf=int(rng.choice([20, 50, 100, 200])))
+
+    def build(self, **hp):
+        from sklearn.tree import DecisionTreeRegressor
+        return DecisionTreeRegressor(random_state=self.seed, **hp)
+
+
+class EBMB(_Tuned):
+    """B10: Explainable Boosting Machine (glass-box additive model with pairwise interactions)."""
+    name = "B10 EBM (glass-box)"
+
+    def space(self, rng):
+        return dict(learning_rate=float(10 ** rng.uniform(-2.5, -1.3)), interactions=int(rng.choice([0, 5, 10])),
+                    max_leaves=int(rng.choice([2, 3, 4])), min_samples_leaf=int(rng.choice([4, 10, 20])))
+
+    def build(self, **hp):
+        from interpret.glassbox import ExplainableBoostingRegressor
+        return ExplainableBoostingRegressor(random_state=self.seed, n_jobs=4, outer_bags=4, **hp)
+
+
 class CocomoLocal(_Base):
     """B6: COCOMO II form E = A * SP^B * prod_j EM_j(level_j), locally calibrated.
 
@@ -243,10 +268,14 @@ class CAEA(_Base):
         return np.maximum(self.v * asp * np.exp(self.smear), 1e-3)
 
 
+def interpretable_baselines(features, n_trials=40, seed=0):
+    return [ShallowTreeB(features, n_trials, seed), EBMB(features, n_trials, seed)]
+
+
 def all_baselines(features, cocomo_drivers, caea_map, n_trials=40, seed=0, caea_constants=None):
     models = [MedianDensity(features), SPVelocity(features),
-              RidgeB(features, n_trials, seed), RandomForestB(features, max(n_trials // 2, 1), seed),
-              GBMB(features, n_trials, seed), MLPB(features, max(n_trials // 2, 1), seed),
+              RidgeB(features, n_trials, seed), RandomForestB(features, n_trials, seed),
+              GBMB(features, n_trials, seed), MLPB(features, n_trials, seed),
               CocomoLocal(cocomo_drivers, seed=seed), CAEA(caea_map, mode="fit", seed=seed)]
     if caea_constants and Path(caea_constants).exists():
         models.append(CAEA(caea_map, mode="paper", constants_file=caea_constants, seed=seed))

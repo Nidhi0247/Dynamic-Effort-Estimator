@@ -1,0 +1,7 @@
+dataset,rep,fold,hp_use_som,hp_use_anfis,hp_use_mamdani,hp_grid,hp_m,hp_n_anfis,hp_mfs,hp_ridge,hp_epochs,hp_n_mam_extra,hp_terms0,hp_n_out,hp_min_support,hp_gens,hp_density
+COCOMO81,0,0,True,True,True,2,3.0,3,3,5.447209314859791,30,1,5,9,2,15,True
+COCOMO81,0,1,True,True,True,2,3.0,2,2,2.573542554816823,30,1,3,7,3,15,True
+COCOMO81,0,2,True,True,True,3,3.0,3,2,0.1,30,1,5,7,1,15,True
+Albrecht,0,0,True,True,True,3,3.0,3,2,0.1,30,1,5,7,1,15,True
+Albrecht,0,1,True,True,True,3,3.0,3,2,0.1,30,1,5,7,1,15,True
+Albrecht,0,2,True,True,True,3,1.0,2,2,0.05376791096250509,30,2,7,9,2,15,True
